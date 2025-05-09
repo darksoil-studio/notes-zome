@@ -1,21 +1,30 @@
-import { 
-  collectionSignal, 
-  liveLinksSignal, 
-  deletedLinksSignal, 
+import { Note } from "./types.js";
+
+import {
   allRevisionsOfEntrySignal,
-  latestVersionOfEntrySignal, 
-  immutableEntrySignal, 
-  deletesForEntrySignal, 
   AsyncComputed,
+  collectionSignal,
+  deletedLinksSignal,
+  deletesForEntrySignal,
+  immutableEntrySignal,
+  latestVersionOfEntrySignal,
+  liveLinksSignal,
   pipe,
 } from "@darksoil-studio/holochain-signals";
-import { slice, HashType, retype, EntryRecord, MemoHoloHashMap } from "@darksoil-studio/holochain-utils";
-import { NewEntryAction, Record, ActionHash, EntryHash, AgentPubKey } from '@holochain/client';
+import { EntryRecord, HashType, MemoHoloHashMap, retype, slice } from "@darksoil-studio/holochain-utils";
+import { ActionHash, AgentPubKey, EntryHash, NewEntryAction, Record } from "@holochain/client";
 
-import { NotesClient } from './notes-client.js';
+import { NotesClient } from "./notes-client.js";
 
 export class NotesStore {
-
   constructor(public client: NotesClient) {}
-  
+
+  /** Note */
+
+  notes = new MemoHoloHashMap((noteHash: ActionHash) => ({
+    latestVersion: latestVersionOfEntrySignal(this.client, () => this.client.getLatestNote(noteHash)),
+    original: immutableEntrySignal(() => this.client.getOriginalNote(noteHash)),
+    allRevisions: allRevisionsOfEntrySignal(this.client, () => this.client.getAllRevisionsForNote(noteHash)),
+    deletes: deletesForEntrySignal(this.client, noteHash, () => this.client.getAllDeletesForNote(noteHash)),
+  }));
 }
