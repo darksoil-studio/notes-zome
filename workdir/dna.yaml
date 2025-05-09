@@ -1,0 +1,27 @@
+---
+manifest_version: "1"
+name: notes_test
+integrity:
+  network_seed: ~
+  properties: ~
+  zomes:
+    - name: notes_integrity
+      hash: ~
+      bundled: "../target/wasm32-unknown-unknown/release/notes_integrity.wasm"
+      dependencies: ~    
+    - name: profiles_integrity
+      hash: ~
+      bundled: <NIX PACKAGE>
+      dependencies: ~
+coordinator:
+  zomes:
+    - name: notes
+      hash: ~
+      bundled: "../target/wasm32-unknown-unknown/release/notes.wasm"
+      dependencies:
+        - name: notes_integrity    
+    - name: profiles
+      hash: ~
+      bundled: <NIX PACKAGE>
+      dependencies:
+        - name: profiles_integrity
