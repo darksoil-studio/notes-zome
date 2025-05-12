@@ -117,6 +117,27 @@ export class NotesZomeMock extends ZomeMock implements AppClient {
       create_link_hash: await fakeActionHash(),
     })));
   }
+
+  /** Incremental Changes for Note */
+  incrementalChangesForNote = new HoloHashMap<ActionHash, Link[]>();
+
+  async get_incremental_changes_for_note(noteHash: ActionHash): Promise<Array<Link>> {
+    return this.incrementalChangesForNote.get(noteHash) || [];
+  }
+
+  async add_incremental_changes_for_note(input: { note_hash: ActionHash; incremental_changes: string }): Promise<void> {
+    const existing = this.incrementalChangesForNote.get(input.note_hash) || [];
+    this.incrementalChangesForNote.set(input.note_hash, [...existing, {
+      base: input.note_hash,
+      target: input.note_hash,
+      author: this.myPubKey,
+      timestamp: Date.now() * 1000,
+      zome_index: 0,
+      link_type: 0,
+      tag: new TextEncoder().encode(input.incremental_changes),
+      create_link_hash: await fakeActionHash(),
+    }]);
+  }
 }
 
 export async function sampleNote(client: NotesClient, partialNote: Partial<Note> = {}): Promise<Note> {

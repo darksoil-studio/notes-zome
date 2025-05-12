@@ -26,6 +26,15 @@ export class NotesStore {
     original: immutableEntrySignal(() => this.client.getOriginalNote(noteHash)),
     allRevisions: allRevisionsOfEntrySignal(this.client, () => this.client.getAllRevisionsForNote(noteHash)),
     deletes: deletesForEntrySignal(this.client, noteHash, () => this.client.getAllDeletesForNote(noteHash)),
+    incrementalChanges: pipe(
+      liveLinksSignal(
+        this.client,
+        noteHash,
+        () => this.client.getIncrementalChangesForNote(noteHash),
+        "IncrementalChanges",
+      ),
+      links => links,
+    ),
   }));
 
   /** All Notes */

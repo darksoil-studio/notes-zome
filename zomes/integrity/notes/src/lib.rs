@@ -1,3 +1,5 @@
+pub mod incremental_changes;
+pub use incremental_changes::*;
 pub mod note;
 use hdi::prelude::*;
 
@@ -16,6 +18,7 @@ pub enum EntryTypes {
 pub enum LinkTypes {
     NoteUpdates,
     AllNotes,
+    IncrementalChanges,
 }
 
 // Validation you perform during the genesis process. Nobody else on the network performs it, only you.
@@ -161,6 +164,9 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
             LinkTypes::AllNotes => {
                 validate_create_link_all_notes(action, base_address, target_address, tag)
             }
+            LinkTypes::IncrementalChanges => {
+                validate_create_link_incremental_changes(action, base_address, target_address, tag)
+            }
         },
         FlatOp::RegisterDeleteLink {
             link_type,
@@ -178,6 +184,13 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
                 tag,
             ),
             LinkTypes::AllNotes => validate_delete_link_all_notes(
+                action,
+                original_action,
+                base_address,
+                target_address,
+                tag,
+            ),
+            LinkTypes::IncrementalChanges => validate_delete_link_incremental_changes(
                 action,
                 original_action,
                 base_address,
@@ -316,6 +329,12 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
                     LinkTypes::AllNotes => {
                         validate_create_link_all_notes(action, base_address, target_address, tag)
                     }
+                    LinkTypes::IncrementalChanges => validate_create_link_incremental_changes(
+                        action,
+                        base_address,
+                        target_address,
+                        tag,
+                    ),
                 },
                 // Complementary validation to the `RegisterDeleteLink` Op, in which the record itself is validated
                 // If you want to optimize performance, you can remove the validation for an entry type here and keep it in `RegisterDeleteLink`
@@ -353,6 +372,13 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
                             create_link.tag,
                         ),
                         LinkTypes::AllNotes => validate_delete_link_all_notes(
+                            action,
+                            create_link.clone(),
+                            base_address,
+                            create_link.target_address,
+                            create_link.tag,
+                        ),
+                        LinkTypes::IncrementalChanges => validate_delete_link_incremental_changes(
                             action,
                             create_link.clone(),
                             base_address,

@@ -72,4 +72,15 @@ export class NotesClient extends ZomeClient<NotesSignal> {
   async getAllNotes(): Promise<Array<Link>> {
     return this.callZome("get_all_notes", undefined);
   }
+
+  async getIncrementalChangesForNote(noteHash: ActionHash): Promise<Array<Link>> {
+    return this.callZome("get_incremental_changes_for_note", noteHash);
+  }
+
+  addIncrementalChangesForNote(noteHash: ActionHash, incrementalChanges: string): Promise<void> {
+    return this.callZome("add_incremental_changes_for_note", {
+      note_hash: noteHash,
+      incremental_changes: incrementalChanges,
+    });
+  }
 }
