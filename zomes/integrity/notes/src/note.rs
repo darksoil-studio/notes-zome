@@ -5,6 +5,8 @@ use hdi::prelude::*;
 pub struct Note {
     pub title: String,
     pub body: String,
+
+    pub images_hashes: Vec<EntryHash>,
 }
 
 pub fn validate_create_note(

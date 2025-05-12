@@ -1,27 +1,35 @@
----
-manifest_version: "1"
+manifest_version: '1'
 name: notes_test
 integrity:
-  network_seed: ~
-  properties: ~
+  network_seed: null
+  properties: null
   zomes:
-    - name: notes_integrity
-      hash: ~
-      bundled: "../target/wasm32-unknown-unknown/release/notes_integrity.wasm"
-      dependencies: ~    
-    - name: profiles_integrity
-      hash: ~
-      bundled: <NIX PACKAGE>
-      dependencies: ~
+  - name: notes_integrity
+    hash: null
+    bundled: ../target/wasm32-unknown-unknown/release/notes_integrity.wasm
+    dependencies: null
+    dylib: null
+  - name: profiles_integrity
+    hash: null
+    bundled: <NIX PACKAGE>
+    dependencies: null
+    dylib: null
 coordinator:
   zomes:
-    - name: notes
-      hash: ~
-      bundled: "../target/wasm32-unknown-unknown/release/notes.wasm"
-      dependencies:
-        - name: notes_integrity    
-    - name: profiles
-      hash: ~
-      bundled: <NIX PACKAGE>
-      dependencies:
-        - name: profiles_integrity
+  - name: notes
+    hash: null
+    bundled: ../target/wasm32-unknown-unknown/release/notes.wasm
+    dependencies:
+    - name: notes_integrity
+    dylib: null
+  - name: profiles
+    hash: null
+    bundled: <NIX PACKAGE>
+    dependencies:
+    - name: profiles_integrity
+    dylib: null
+  - name: collaborative_sessions
+    hash: null
+    bundled: <NIX_PACKAGE>
+    dependencies: null
+    dylib: null
