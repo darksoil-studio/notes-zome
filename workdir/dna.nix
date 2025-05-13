@@ -7,7 +7,7 @@
         dnaManifest = ./dna.yaml;
         zomes = {
           collaborative_sessions =
-            inputs'.collaborative-sessions-zome.packages.collaborative_sessions_coordinator;
+            inputs'.collaborative-sessions-zome.packages.collaborative_sessions;
           # Include here the zome packages for this DNA, e.g.:
           profiles_integrity =
             inputs'.profiles-zome.packages.profiles_integrity;

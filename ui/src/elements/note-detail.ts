@@ -31,7 +31,10 @@ import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { baseKeymap } from 'prosemirror-commands';
+import { keymap } from 'prosemirror-keymap';
 
+import { basicTextSchema } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
 import { NotesStore } from '../notes-store.js';
 import { Note } from '../types.js';
@@ -86,12 +89,16 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						style="font-size: 24px; overflow: auto"
 						.sessionId=${`${encodeHashToBase64(this.noteHash)}/title`}
 						.acceptedCollaborators=${this.acceptedCollaborators}
+						.schema=${basicTextSchema}
 					>
 					</collaborative-prosemirror>
 
 					<collaborative-prosemirror
 						.sessionId=${`${encodeHashToBase64(this.noteHash)}/body`}
 						.acceptedCollaborators=${this.acceptedCollaborators}
+						.schema=${basicTextSchema}
+						style="flex: 1"
+						.plugins=${[keymap(baseKeymap)]}
 					>
 					</collaborative-prosemirror>
 
