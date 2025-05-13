@@ -24,9 +24,10 @@
 		"./locales/*": "./locales/*"
 	},
 	"dependencies": {
+		"@automerge/automerge": "^2.2.9",
 		"@automerge/prosemirror": "^0.0.13",
 		"@darksoil-studio/automerge-collaborative-prosemirror": "file:/home/guillem/projects/darksoil/collaborative-sessions/packages/automerge-collaborative-prosemirror",
-		"@darksoil-studio/automerge-collaborative-sessions": "^0.500.2",
+		"@darksoil-studio/automerge-collaborative-sessions": "^0.500.3",
 		"@darksoil-studio/collaborative-sessions-zome": "0.500.0-rev.057c4143f4005b1908b48a352606d88aff23f88b",
 		"@darksoil-studio/holochain-elements": "^0.500.0",
 		"@darksoil-studio/holochain-signals": "^0.500.0",

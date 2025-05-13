@@ -11,3 +11,6 @@ name = "notes_integrity"
 hdi = { workspace = true }
 
 serde = { workspace = true }
+# automerge = { git = "https://github.com/automerge/automerge", branch = "main" }
+# autosurgeon = { git = "https://github.com/automerge/", default-features = false }
+# getrandom = "0.2"

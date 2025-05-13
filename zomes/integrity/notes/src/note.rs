@@ -1,18 +1,39 @@
+// use automerge::AutoCommit;
+// use autosurgeon::{hydrate, Hydrate};
 use hdi::prelude::*;
 
 #[derive(Clone, PartialEq)]
 #[hdk_entry_helper]
-pub struct Note {
-    pub title: String,
-    pub body: String,
+pub struct Note(pub Vec<u8>);
 
-    pub images_hashes: Vec<EntryHash>,
-}
+// #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
+// pub struct Document(pub Vec<u8>);
+// #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
+// pub struct HydratedHoloHash<T: HashType>(pub HoloHash<T>);
+// impl<T: HashType> Hydrate for HydratedHoloHash<T> {
+//     fn hydrate_bytes(bytes: &[u8]) -> Result<HydratedHoloHash<T>, autosurgeon::HydrateError> {
+//         let hash: HoloHash<T> = HoloHash::from_raw_39(bytes.to_vec());
+//         Ok(HydratedHoloHash(hash))
+//     }
+// }
+// pub type HydrateEntryHash = HydratedHoloHash<hash_type::Entry>;
+
+// #[derive(Clone, Hydrate, PartialEq, Serialize, Deserialize, Debug)]
+// pub struct NoteContent {
+//     pub title: String,
+//     pub body: String,
+
+//     pub images_hashes: Vec<HydrateEntryHash>,
+// }
 
 pub fn validate_create_note(
     _action: EntryCreationAction,
-    _note: Note,
+    note: Note,
 ) -> ExternResult<ValidateCallbackResult> {
+    // let autocommit =
+    //     AutoCommit::load(note.0.as_slice()).map_err(|err| wasm_error!("Load error {:?}", err))?;
+    // let _note: NoteContent =
+    //     hydrate(&autocommit).map_err(|err| wasm_error!("Invalid data: {:?}", err))?;
     // TODO: add the appropriate validation rules
     Ok(ValidateCallbackResult::Valid)
 }

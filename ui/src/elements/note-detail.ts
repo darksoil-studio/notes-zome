@@ -1,4 +1,6 @@
+import { next as Automerge } from '@automerge/automerge/slim';
 import '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
+import { CollaborativeProsemirror } from '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
 import {
 	hashProperty,
 	notifyError,
@@ -36,6 +38,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { basicTextSchema } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
+import { AutomergeEntryRecord } from '../notes-client.js';
 import { NotesStore } from '../notes-store.js';
 import { Note } from '../types.js';
 
@@ -81,7 +84,7 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 		}
 	}
 
-	renderDetail(entryRecord: EntryRecord<Note>) {
+	renderDetail(entryRecord: AutomergeEntryRecord<Note>) {
 		return html`
 			<sl-card style="flex: 1">
 				<div class="column" style="gap: 16px; flex: 1; width: 558px">
@@ -90,6 +93,8 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						.sessionId=${`${encodeHashToBase64(this.noteHash)}/title`}
 						.acceptedCollaborators=${this.acceptedCollaborators}
 						.schema=${basicTextSchema}
+						.initialDocument=${entryRecord.entry}
+						.path=${['title']}
 					>
 					</collaborative-prosemirror>
 
@@ -99,6 +104,14 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						.schema=${basicTextSchema}
 						style="flex: 1"
 						.plugins=${[keymap(baseKeymap)]}
+						.path=${['body']}
+						.initialDocument=${entryRecord.entry}
+						@document-change=${(e: CustomEvent) => {
+							console.log(
+								Automerge.saveIncremental(e.detail.change.doc),
+								Automerge.save(e.detail.change.doc),
+							);
+						}}
 					>
 					</collaborative-prosemirror>
 
