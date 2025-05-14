@@ -36,25 +36,29 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 	@consume({ context: notesStoreContext, subscribe: true })
 	notesStore!: NotesStore;
 
-	renderSummary(entryRecord: EntryRecord<Note>) {
+	renderSummary(note: Note) {
 		return html`
 			<div class="row" style="gap: 16px; flex: 1; height: 200px">
-				<div class="row" style="height: 200px">
-					${entryRecord.entry.images_hashes.map(
-						imageHash => html`
-							<show-image
-								style="max-width: 600px;"
-								.imageHash=${imageHash}
-							></show-image>
-						`,
-					)}
-				</div>
-				<div class="column" style="gap: 16px; flex: 1; margin-left: 20px">
+				${note.images_hashes.length > 0
+					? html`
+							<div class="column" style="height: 200px">
+								${note.images_hashes.map(
+									imageHash => html`
+										<show-image
+											style="max-width: 600px;"
+											.imageHash=${imageHash}
+										></show-image>
+									`,
+								)}
+							</div>
+						`
+					: html``}
+				<div class="column" style="gap: 16px; flex: 1;">
 					<span style="white-space: pre-line; font-size: 24px"
-						>${entryRecord.entry.title}</span
+						>${note.title}</span
 					>
 
-					<div style="overflow: hidden">${entryRecord.entry.body}</div>
+					<div style="overflow: hidden">${note.body}</div>
 				</div>
 			</div>
 		`;

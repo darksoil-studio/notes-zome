@@ -54,48 +54,36 @@ pub fn get_original_note(original_note_hash: ActionHash) -> ExternResult<Option<
 
 #[hdk_extern]
 pub fn get_all_revisions_for_note(original_note_hash: ActionHash) -> ExternResult<Vec<Record>> {
-    let Some(original_record) = get_original_note(original_note_hash.clone())? else {
+    let Some(Details::Record(record_details)) =
+        get_details(original_note_hash.clone(), GetOptions::default())?
+    else {
         return Ok(vec![]);
     };
-    let links = get_links(
-        GetLinksInputBuilder::try_new(original_note_hash.clone(), LinkTypes::NoteUpdates)?.build(),
-    )?;
-    let get_input: Vec<GetInput> = links
+    let get_input: Vec<GetInput> = record_details
+        .updates
         .into_iter()
-        .map(|link| {
+        .map(|update| {
             Ok(GetInput::new(
-                link.target
-                    .into_action_hash()
-                    .ok_or(wasm_error!(WasmErrorInner::Guest(
-                        "No action hash associated with link".to_string()
-                    )))?
-                    .into(),
+                update.hashed.hash.into(),
                 GetOptions::default(),
             ))
         })
         .collect::<ExternResult<Vec<GetInput>>>()?;
     let records = HDK.with(|hdk| hdk.borrow().get(get_input))?;
     let mut records: Vec<Record> = records.into_iter().flatten().collect();
-    records.insert(0, original_record);
+    records.insert(0, record_details.record);
     Ok(records)
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateNoteInput {
     pub original_note_hash: ActionHash,
-    pub previous_note_hash: ActionHash,
     pub updated_note: Note,
 }
 
 #[hdk_extern]
 pub fn update_note(input: UpdateNoteInput) -> ExternResult<Record> {
-    let updated_note_hash = update_entry(input.previous_note_hash.clone(), &input.updated_note)?;
-    create_link(
-        input.original_note_hash.clone(),
-        updated_note_hash.clone(),
-        LinkTypes::NoteUpdates,
-        (),
-    )?;
+    let updated_note_hash = update_entry(input.original_note_hash.clone(), &input.updated_note)?;
     let record = get(updated_note_hash.clone(), GetOptions::default())?.ok_or(wasm_error!(
         WasmErrorInner::Guest("Could not find the newly updated Note".to_string())
     ))?;

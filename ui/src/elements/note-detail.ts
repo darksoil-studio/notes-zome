@@ -1,6 +1,7 @@
 import { next as Automerge } from '@automerge/automerge/slim';
 import '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
-import { CollaborativeProsemirror } from '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
+import '@darksoil-studio/automerge-collaborative-sessions/dist/elements/collaborative-document-context.js';
+import { CollaborativeDocumentContext } from '@darksoil-studio/automerge-collaborative-sessions/dist/elements/collaborative-document-context.js';
 import {
 	hashProperty,
 	notifyError,
@@ -31,6 +32,7 @@ import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { baseKeymap } from 'prosemirror-commands';
@@ -38,7 +40,6 @@ import { keymap } from 'prosemirror-keymap';
 
 import { basicTextSchema } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
-import { AutomergeEntryRecord } from '../notes-client.js';
 import { NotesStore } from '../notes-store.js';
 import { Note } from '../types.js';
 
@@ -84,36 +85,90 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 		}
 	}
 
-	renderDetail(entryRecord: AutomergeEntryRecord<Note>) {
+	onbeforeunload = (_e: BeforeUnloadEvent) =>
+		msg('Are you sure you want to leave?');
+	unlisten: (() => void) | undefined;
+	unloadSetup = false;
+
+	async setupUnload() {
+		if (this.unloadSetup) return;
+		this.unloadSetup = true;
+		window.addEventListener('beforeunload', this.onbeforeunload);
+		try {
+			this.unlisten = await getCurrentWindow().onCloseRequested(async event => {
+				try {
+					await this.updateNote();
+				} catch (e) {
+					notifyError(msg('Failed to save note.'));
+					event.preventDefault();
+				}
+			});
+		} catch (e) {
+			console.log('Not in a tauri context', e);
+		}
+	}
+
+	disconnectedCallback(): void {
+		super.disconnectedCallback();
+		this.updateNote();
+		window.removeEventListener('beforeunload', this.onbeforeunload);
+		if (this.unlisten) this.unlisten();
+	}
+
+	async updateNote() {
+		const updatedNote = this.shadowRoot!.querySelector(
+			'collaborative-document-context',
+		) as CollaborativeDocumentContext;
+
+		const newNote = updatedNote.document.docSync()! as Automerge.Doc<Note>;
+
+		try {
+			const updateRecord = await this.notesStore.client.updateNote(
+				this.noteHash,
+				newNote,
+			);
+
+			this.dispatchEvent(
+				new CustomEvent('note-updated', {
+					composed: true,
+					bubbles: true,
+					detail: {
+						originalNoteHash: this.noteHash,
+						updatedNoteHash: updateRecord.actionHash,
+					},
+				}),
+			);
+		} catch (e: unknown) {
+			console.error(e);
+			notifyError(msg('Error updating the note'));
+		}
+	}
+
+	renderDetail(doc: Automerge.Doc<Note>) {
 		return html`
 			<sl-card style="flex: 1">
 				<div class="column" style="gap: 16px; flex: 1; width: 558px">
-					<collaborative-prosemirror
-						style="font-size: 24px; overflow: auto"
-						.sessionId=${`${encodeHashToBase64(this.noteHash)}/title`}
+					<collaborative-document-context
+						.sessionId="${encodeHashToBase64(this.noteHash)}}"
 						.acceptedCollaborators=${this.acceptedCollaborators}
-						.schema=${basicTextSchema}
-						.initialDocument=${entryRecord.entry}
-						.path=${['title']}
+						.initialDocument=${doc}
+						@document-changed=${() => this.setupUnload()}
 					>
-					</collaborative-prosemirror>
+						<collaborative-prosemirror
+							style="font-size: 24px; overflow: auto"
+							.schema=${basicTextSchema}
+							.path=${['title']}
+						>
+						</collaborative-prosemirror>
 
-					<collaborative-prosemirror
-						.sessionId=${`${encodeHashToBase64(this.noteHash)}/body`}
-						.acceptedCollaborators=${this.acceptedCollaborators}
-						.schema=${basicTextSchema}
-						style="flex: 1"
-						.plugins=${[keymap(baseKeymap)]}
-						.path=${['body']}
-						.initialDocument=${entryRecord.entry}
-						@document-change=${(e: CustomEvent) => {
-							console.log(
-								Automerge.saveIncremental(e.detail.change.doc),
-								Automerge.save(e.detail.change.doc),
-							);
-						}}
-					>
-					</collaborative-prosemirror>
+						<collaborative-prosemirror
+							.schema=${basicTextSchema}
+							style="flex: 1"
+							.plugins=${[keymap(baseKeymap)]}
+							.path=${['body']}
+						>
+						</collaborative-prosemirror>
+					</collaborative-document-context>
 
 					<div class="row" style="max-height: 200px">
 						<sl-icon-button

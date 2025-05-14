@@ -16,15 +16,7 @@ import {
 
 import { Note } from './types.js';
 import { NotesSignal } from './types.js';
-
-export class AutomergeEntryRecord<T> extends EntryRecord<Automerge.Doc<T>> {
-	constructor(record: HRecord) {
-		super(record);
-	}
-	get entry(): Automerge.Doc<T> {
-		return Automerge.load(super.entry as unknown as Uint8Array);
-	}
-}
+import { AutomergeEntryRecord } from './utils.js';
 
 export class NotesClient extends ZomeClient<NotesSignal> {
 	constructor(
@@ -37,12 +29,11 @@ export class NotesClient extends ZomeClient<NotesSignal> {
 	/** Note */
 
 	async createNote(note: Note): Promise<EntryRecord<Note>> {
-		const record: HRecord = await this.callZome(
-			'create_note',
-			Automerge.save(
+		const record: HRecord = await this.callZome('create_note', {
+			data: Automerge.save(
 				Automerge.from(note as unknown as Record<string, unknown>),
 			),
-		);
+		});
 		return new EntryRecord(record);
 	}
 
@@ -57,30 +48,30 @@ export class NotesClient extends ZomeClient<NotesSignal> {
 		noteHash: ActionHash,
 	): Promise<EntryRecord<Note> | undefined> {
 		const record: HRecord = await this.callZome('get_original_note', noteHash);
-		return record ? new EntryRecord(record) : undefined;
+		return record ? new AutomergeEntryRecord(record) : undefined;
 	}
 
 	async getAllRevisionsForNote(
 		noteHash: ActionHash,
-	): Promise<Array<EntryRecord<Note>>> {
+	): Promise<Array<AutomergeEntryRecord<Note>>> {
 		const records: HRecord[] = await this.callZome(
 			'get_all_revisions_for_note',
 			noteHash,
 		);
-		return records.map(r => new EntryRecord(r));
+		return records.map(r => new AutomergeEntryRecord(r));
 	}
 
 	async updateNote(
-		originalNoteHash: ActionHash,
-		previousNoteHash: ActionHash,
+		noteHash: ActionHash,
 		updatedNote: Automerge.Doc<Note>,
 	): Promise<EntryRecord<Note>> {
 		const record: HRecord = await this.callZome('update_note', {
-			original_note_hash: originalNoteHash,
-			previous_note_hash: previousNoteHash,
-			updated_note: Automerge.save(updatedNote),
+			original_note_hash: noteHash,
+			updated_note: {
+				data: Automerge.save(updatedNote),
+			},
 		});
-		return new EntryRecord(record);
+		return new AutomergeEntryRecord(record);
 	}
 
 	deleteNote(originalNoteHash: ActionHash): Promise<ActionHash> {

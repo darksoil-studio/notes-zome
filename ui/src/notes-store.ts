@@ -1,5 +1,7 @@
+import { next as Automerge } from '@automerge/automerge/slim';
 import {
 	AsyncComputed,
+	AsyncSignal,
 	allRevisionsOfEntrySignal,
 	collectionSignal,
 	deletedLinksSignal,
@@ -10,6 +12,7 @@ import {
 	pipe,
 } from '@darksoil-studio/holochain-signals';
 import {
+	ActionCommittedSignal,
 	EntryRecord,
 	HashType,
 	MemoHoloHashMap,
@@ -26,33 +29,53 @@ import {
 
 import { NotesClient } from './notes-client.js';
 import { Note } from './types.js';
+import { allRevisionsOfAutomergeEntrySignal } from './utils.js';
 
 export class NotesStore {
 	constructor(public client: NotesClient) {}
 
 	/** Note */
 
-	notes = new MemoHoloHashMap((noteHash: ActionHash) => ({
-		latestVersion: latestVersionOfEntrySignal(this.client, () =>
-			this.client.getLatestNote(noteHash),
-		),
-		original: immutableEntrySignal(() => this.client.getOriginalNote(noteHash)),
-		allRevisions: allRevisionsOfEntrySignal(this.client, () =>
+	notes = new MemoHoloHashMap((noteHash: ActionHash) => {
+		const allRevisions = allRevisionsOfAutomergeEntrySignal(this.client, () =>
 			this.client.getAllRevisionsForNote(noteHash),
-		),
-		deletes: deletesForEntrySignal(this.client, noteHash, () =>
-			this.client.getAllDeletesForNote(noteHash),
-		),
-		incrementalChanges: pipe(
-			liveLinksSignal(
-				this.client,
-				noteHash,
-				() => this.client.getIncrementalChangesForNote(noteHash),
-				'IncrementalChanges',
+		);
+		return {
+			latestVersion: new AsyncComputed(() => {
+				const allRevisionsResult = allRevisions.get();
+				if (allRevisionsResult.status !== 'completed')
+					return allRevisionsResult;
+
+				const notes = allRevisionsResult.value.map(r => r.data);
+
+				let doc: Automerge.Doc<Note> = Automerge.load(notes[0]);
+
+				for (let i = 1; i < notes.length; i++) {
+					doc = Automerge.loadIncremental(doc, notes[i]);
+				}
+				return {
+					status: 'completed',
+					value: doc,
+				};
+			}),
+			original: immutableEntrySignal(() =>
+				this.client.getOriginalNote(noteHash),
 			),
-			links => links,
-		),
-	}));
+			allRevisions,
+			deletes: deletesForEntrySignal(this.client, noteHash, () =>
+				this.client.getAllDeletesForNote(noteHash),
+			),
+			incrementalChanges: pipe(
+				liveLinksSignal(
+					this.client,
+					noteHash,
+					() => this.client.getIncrementalChangesForNote(noteHash),
+					'IncrementalChanges',
+				),
+				links => links,
+			),
+		};
+	});
 
 	/** All Notes */
 

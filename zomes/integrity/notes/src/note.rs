@@ -4,7 +4,9 @@ use hdi::prelude::*;
 
 #[derive(Clone, PartialEq)]
 #[hdk_entry_helper]
-pub struct Note(pub Vec<u8>);
+pub struct Note {
+    pub data: Vec<u8>,
+}
 
 // #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
 // pub struct Document(pub Vec<u8>);
