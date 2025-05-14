@@ -54,11 +54,14 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 						`
 					: html``}
 				<div class="column" style="gap: 16px; flex: 1;">
-					<span style="white-space: pre-line; font-size: 24px"
+					<span
+						style="white-space: pre-line; font-size: 24px; word-break: break-all"
 						>${note.title}</span
 					>
 
-					<div style="overflow: hidden">${note.body}</div>
+					<div style="overflow: hidden; word-break: break-all">
+						${note.body}
+					</div>
 				</div>
 			</div>
 		`;

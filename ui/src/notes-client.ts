@@ -63,12 +63,12 @@ export class NotesClient extends ZomeClient<NotesSignal> {
 
 	async updateNote(
 		noteHash: ActionHash,
-		updatedNote: Automerge.Doc<Note>,
+		data: Uint8Array,
 	): Promise<EntryRecord<Note>> {
 		const record: HRecord = await this.callZome('update_note', {
 			original_note_hash: noteHash,
 			updated_note: {
-				data: Automerge.save(updatedNote),
+				data,
 			},
 		});
 		return new AutomergeEntryRecord(record);

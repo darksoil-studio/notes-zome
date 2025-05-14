@@ -53,6 +53,7 @@ export class NotesStore {
 				for (let i = 1; i < notes.length; i++) {
 					doc = Automerge.loadIncremental(doc, notes[i]);
 				}
+				Automerge.save(doc);
 				return {
 					status: 'completed',
 					value: doc,
