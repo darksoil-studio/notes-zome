@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_note","delete_note","get_all_deletes_for_note","get_all_revisions_for_note","get_latest_note","get_oldest_delete_for_note","get_original_note","update_note"],"struct":["UpdateNoteInput"]};

@@ -1,0 +1,1133 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "locales/locales.js",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "sourceLocale",
+          "default": "`en`",
+          "description": "The locale code that templates in this source code are written in."
+        },
+        {
+          "kind": "variable",
+          "name": "targetLocales",
+          "type": {
+            "text": "array"
+          },
+          "default": "[ , ]",
+          "description": "The other locale codes that this application is localized into. Sorted\nlexicographically."
+        },
+        {
+          "kind": "variable",
+          "name": "allLocales",
+          "type": {
+            "text": "array"
+          },
+          "default": "[ `en`, ]",
+          "description": "All valid project locale codes. Sorted lexicographically."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "sourceLocale",
+          "declaration": {
+            "name": "sourceLocale",
+            "module": "locales/locales.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "targetLocales",
+          "declaration": {
+            "name": "targetLocales",
+            "module": "locales/locales.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "allLocales",
+          "declaration": {
+            "name": "allLocales",
+            "module": "locales/locales.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/basic-text-schema.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "basicTextSchema",
+          "type": {
+            "text": "MappedSchemaSpec"
+          },
+          "default": "{ nodes: { /// NodeSpec The top level document node. doc: { content: 'block+', } as NodeSpec, /// A plain paragraph textblock. Represented in the DOM /// as a `<p>` element. paragraph: { automerge: { block: 'paragraph', }, content: 'inline*', group: 'block', parseDOM: [{ tag: 'p' }], toDOM() { return pDOM; }, } as NodeSpec, unknownBlock: { automerge: { unknownBlock: true, }, group: 'block', content: 'block+', parseDOM: [{ tag: 'div', attrs: { 'data-unknown-block': 'true' } }], toDOM() { return ['div', { 'data-unknown-block': 'true' }, 0]; }, }, /// The text node. text: { group: 'inline', } as NodeSpec, }, marks: {}, }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "basicTextSchema",
+          "declaration": {
+            "name": "basicTextSchema",
+            "module": "src/basic-text-schema.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/context.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "notesStoreContext"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "notesStoreContext",
+          "declaration": {
+            "name": "notesStoreContext",
+            "module": "src/context.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./notes-store.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./notes-client.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./context.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./types.js"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/mocks.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotesZomeMock",
+          "members": [
+            {
+              "kind": "field",
+              "name": "notes",
+              "default": "new HoloHashMap< ActionHash, { deletes: Array<SignedActionHashed<Delete>>; revisions: Array<Record>; } >()",
+              "description": "Note"
+            },
+            {
+              "kind": "method",
+              "name": "create_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Record>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "note",
+                  "type": {
+                    "text": "Note"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "get_latest_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Record | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "get_all_revisions_for_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Record[] | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "get_original_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Record | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "get_all_deletes_for_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<SignedActionHashed<Delete>> | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "get_oldest_delete_for_note",
+              "return": {
+                "type": {
+                  "text": "Promise<SignedActionHashed<Delete> | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "delete_note",
+              "return": {
+                "type": {
+                  "text": "Promise<ActionHash>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "original_note_hash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "update_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Record>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "input",
+                  "type": {
+                    "text": "{\n\t\toriginal_note_hash: ActionHash;\n\t\tprevious_note_hash: ActionHash;\n\t\tupdated_note: Note;\n\t}"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "get_all_notes",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<Link>>"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "incrementalChangesForNote",
+              "default": "new HoloHashMap<ActionHash, Link[]>()",
+              "description": "Incremental Changes for Note"
+            },
+            {
+              "kind": "method",
+              "name": "get_incremental_changes_for_note",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<Link>>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "add_incremental_changes_for_note",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "input",
+                  "type": {
+                    "text": "{\n\t\tnote_hash: ActionHash;\n\t\tincremental_changes: string;\n\t}"
+                  }
+                }
+              ]
+            }
+          ],
+          "superclass": {
+            "name": "ZomeMock",
+            "package": "@darksoil-studio/holochain-utils"
+          }
+        },
+        {
+          "kind": "function",
+          "name": "sampleNote",
+          "return": {
+            "type": {
+              "text": "Promise<Note>"
+            }
+          },
+          "parameters": [
+            {
+              "name": "client",
+              "type": {
+                "text": "NotesClient"
+              }
+            },
+            {
+              "name": "partialNote",
+              "default": "{}",
+              "type": {
+                "text": "Partial<Note>"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotesZomeMock",
+          "declaration": {
+            "name": "NotesZomeMock",
+            "module": "src/mocks.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "sampleNote",
+          "declaration": {
+            "name": "sampleNote",
+            "module": "src/mocks.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/notes-client.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotesClient",
+          "members": [
+            {
+              "kind": "method",
+              "name": "createNote",
+              "return": {
+                "type": {
+                  "text": "Promise<EntryRecord<Note>>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "note",
+                  "type": {
+                    "text": "Note"
+                  }
+                }
+              ],
+              "description": "Note"
+            },
+            {
+              "kind": "method",
+              "name": "getLatestNote",
+              "return": {
+                "type": {
+                  "text": "Promise<EntryRecord<Automerge.Doc<Note>> | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getOriginalNote",
+              "return": {
+                "type": {
+                  "text": "Promise<EntryRecord<Note> | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getAllRevisionsForNote",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<AutomergeEntryRecord<Note>>>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "updateNote",
+              "return": {
+                "type": {
+                  "text": "Promise<EntryRecord<Note>>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                },
+                {
+                  "name": "previousHashes",
+                  "type": {
+                    "text": "ActionHash[]"
+                  }
+                },
+                {
+                  "name": "data",
+                  "type": {
+                    "text": "Uint8Array"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "deleteNote",
+              "return": {
+                "type": {
+                  "text": "Promise<ActionHash>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "originalNoteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getAllDeletesForNote",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<SignedActionHashed<Delete>> | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "originalNoteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getOldestDeleteForNote",
+              "return": {
+                "type": {
+                  "text": "Promise<SignedActionHashed<Delete> | undefined>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "originalNoteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getAllNotes",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<Link>>"
+                }
+              },
+              "description": "All Notes"
+            },
+            {
+              "kind": "method",
+              "name": "getIncrementalChangesForNote",
+              "return": {
+                "type": {
+                  "text": "Promise<Array<Link>>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "addIncrementalChangesForNote",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "noteHash",
+                  "type": {
+                    "text": "ActionHash"
+                  }
+                },
+                {
+                  "name": "incrementalChanges",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            }
+          ],
+          "superclass": {
+            "name": "ZomeClient",
+            "package": "@darksoil-studio/holochain-utils"
+          }
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotesClient",
+          "declaration": {
+            "name": "NotesClient",
+            "module": "src/notes-client.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/notes-store.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotesStore",
+          "members": [
+            {
+              "kind": "field",
+              "name": "notes",
+              "default": "new MemoHoloHashMap((noteHash: ActionHash) => { const allRevisions = allRevisionsOfAutomergeEntrySignal( this.client, () => this.client.getAllRevisionsForNote(noteHash), 2000, ); return { latestVersion: new AsyncComputed(() => { const allRevisionsResult = allRevisions.get(); if (allRevisionsResult.status !== 'completed') return allRevisionsResult; const hasDescendants = (actionHash: ActionHash) => allRevisionsResult.value.find(r => r.previousHashes.find( h => encodeHashToBase64(h) === encodeHashToBase64(actionHash), ), ); const previousHashes = allRevisionsResult.value .filter(r => !hasDescendants(r.actionHash)) .map(r => r.actionHash); const notes = allRevisionsResult.value.map(r => r.data); let doc: Automerge.Doc<Note> = Automerge.load(notes[0]); for (let i = 1; i < notes.length; i++) { doc = Automerge.loadIncremental(doc, notes[i]); } Automerge.save(doc); return { status: 'completed', value: { doc, previousHashes, }, }; }), original: immutableEntrySignal(() => this.client.getOriginalNote(noteHash), ), allRevisions, deletes: deletesForEntrySignal(this.client, noteHash, () => this.client.getAllDeletesForNote(noteHash), ), incrementalChanges: pipe( liveLinksSignal( this.client, noteHash, () => this.client.getIncrementalChangesForNote(noteHash), 'IncrementalChanges', ), links => links, ), }; })",
+              "description": "Note"
+            },
+            {
+              "kind": "field",
+              "name": "allNotes",
+              "description": "All Notes"
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotesStore",
+          "declaration": {
+            "name": "NotesStore",
+            "module": "src/notes-store.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/types.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/utils.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "AutomergeEntryRecord",
+          "members": [
+            {
+              "kind": "field",
+              "name": "data",
+              "type": {
+                "text": "Uint8Array"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "previousHashes",
+              "type": {
+                "text": "ActionHash[]"
+              },
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "entry",
+              "type": {
+                "text": "Automerge.Doc<T>"
+              },
+              "readonly": true
+            }
+          ],
+          "superclass": {
+            "name": "EntryRecord",
+            "package": "@darksoil-studio/holochain-utils"
+          }
+        },
+        {
+          "kind": "function",
+          "name": "allRevisionsOfAutomergeEntrySignal",
+          "return": {
+            "type": {
+              "text": "AsyncSignal<Array<AutomergeEntryRecord<T>>>"
+            }
+          },
+          "parameters": [
+            {
+              "name": "client",
+              "type": {
+                "text": "ZomeClient<S>"
+              }
+            },
+            {
+              "name": "fetchAllRevisions",
+              "type": {
+                "text": "() => Promise<Array<EntryRecord<T>>>"
+              }
+            },
+            {
+              "name": "pollIntervalMs",
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AutomergeEntryRecord",
+          "declaration": {
+            "name": "AutomergeEntryRecord",
+            "module": "src/utils.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "allRevisionsOfAutomergeEntrySignal",
+          "declaration": {
+            "name": "allRevisionsOfAutomergeEntrySignal",
+            "module": "src/utils.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/all-notes.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "AllNotes",
+          "members": [
+            {
+              "kind": "method",
+              "name": "renderList",
+              "parameters": [
+                {
+                  "name": "hashes",
+                  "type": {
+                    "text": "Array<ActionHash>"
+                  }
+                }
+              ]
+            }
+          ],
+          "mixins": [
+            {
+              "name": "SignalWatcher",
+              "package": "@darksoil-studio/holochain-signals"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "all-notes",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "AllNotes",
+          "declaration": {
+            "name": "AllNotes",
+            "module": "src/elements/all-notes.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "all-notes",
+          "declaration": {
+            "name": "AllNotes",
+            "module": "src/elements/all-notes.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/note-detail.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NoteDetail",
+          "members": [
+            {
+              "kind": "field",
+              "name": "noteHash",
+              "type": {
+                "text": "ActionHash"
+              },
+              "description": "REQUIRED. The hash of the Note to show",
+              "attribute": "noteHash"
+            },
+            {
+              "kind": "field",
+              "name": "acceptedCollaborators",
+              "type": {
+                "text": "Array<AgentPubKey>"
+              },
+              "default": "[]",
+              "attribute": "acceptedCollaborators"
+            },
+            {
+              "kind": "method",
+              "name": "deleteNote"
+            },
+            {
+              "kind": "field",
+              "name": "onbeforeunload"
+            },
+            {
+              "kind": "field",
+              "name": "unlisten",
+              "type": {
+                "text": "(() => void) | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "unloadSetup",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "setupUnload"
+            },
+            {
+              "kind": "method",
+              "name": "updateNote"
+            },
+            {
+              "kind": "method",
+              "name": "renderDetail",
+              "parameters": [
+                {
+                  "name": "doc",
+                  "type": {
+                    "text": "Automerge.Doc<Note>"
+                  }
+                }
+              ]
+            }
+          ],
+          "events": [
+            {
+              "name": "note-deleted",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "name": "note-updated",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "description": "fired when the user clicks the edit icon button",
+              "name": "edit-clicked:"
+            },
+            {
+              "description": "detail will contain { noteHash }",
+              "name": "note-deleted:"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "noteHash",
+              "type": {
+                "text": "ActionHash"
+              },
+              "description": "REQUIRED. The hash of the Note to show",
+              "fieldName": "noteHash"
+            },
+            {
+              "name": "acceptedCollaborators",
+              "type": {
+                "text": "Array<AgentPubKey>"
+              },
+              "default": "[]",
+              "fieldName": "acceptedCollaborators"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "SignalWatcher",
+              "package": "@darksoil-studio/holochain-signals"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "note-detail",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NoteDetail",
+          "declaration": {
+            "name": "NoteDetail",
+            "module": "src/elements/note-detail.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "note-detail",
+          "declaration": {
+            "name": "NoteDetail",
+            "module": "src/elements/note-detail.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/note-summary.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NoteSummary",
+          "members": [
+            {
+              "kind": "field",
+              "name": "noteHash",
+              "type": {
+                "text": "ActionHash"
+              },
+              "description": "REQUIRED. The hash of the Note to show",
+              "attribute": "noteHash"
+            },
+            {
+              "kind": "method",
+              "name": "renderSummary",
+              "parameters": [
+                {
+                  "name": "note",
+                  "type": {
+                    "text": "Note"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "renderNote"
+            }
+          ],
+          "events": [
+            {
+              "name": "note-selected",
+              "type": {
+                "text": "CustomEvent"
+              }
+            },
+            {
+              "description": "detail will contain { noteHash }",
+              "name": "note-selected:"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "noteHash",
+              "type": {
+                "text": "ActionHash"
+              },
+              "description": "REQUIRED. The hash of the Note to show",
+              "fieldName": "noteHash"
+            }
+          ],
+          "mixins": [
+            {
+              "name": "SignalWatcher",
+              "package": "@darksoil-studio/holochain-signals"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "note-summary",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NoteSummary",
+          "declaration": {
+            "name": "NoteSummary",
+            "module": "src/elements/note-summary.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "note-summary",
+          "declaration": {
+            "name": "NoteSummary",
+            "module": "src/elements/note-summary.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/notes-context.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "NotesContext",
+          "members": [
+            {
+              "kind": "field",
+              "name": "client",
+              "type": {
+                "text": "AppClient"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "store",
+              "type": {
+                "text": "NotesStore"
+              },
+              "attribute": "store"
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "role"
+            },
+            {
+              "kind": "field",
+              "name": "zome",
+              "type": {
+                "text": "string"
+              },
+              "default": "'notes'",
+              "attribute": "zome"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "store",
+              "type": {
+                "text": "NotesStore"
+              },
+              "fieldName": "store"
+            },
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "role"
+            },
+            {
+              "name": "zome",
+              "type": {
+                "text": "string"
+              },
+              "default": "'notes'",
+              "fieldName": "zome"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "notes-context",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "NotesContext",
+          "declaration": {
+            "name": "NotesContext",
+            "module": "src/elements/notes-context.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "notes-context",
+          "declaration": {
+            "name": "NotesContext",
+            "module": "src/elements/notes-context.ts"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["validate_create_link_all_notes","validate_create_link_note_updates","validate_create_note","validate_delete_link_all_notes","validate_delete_link_note_updates","validate_delete_note","validate_update_note"],"struct":["Note"]};

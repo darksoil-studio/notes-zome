@@ -1,0 +1,1 @@
+import{_ as a,c as e,o as s,a2 as r}from"./chunks/framework.BTHFNYH-.js";const n=JSON.parse('{"title":"Setup","description":"","frontmatter":{},"headers":[],"relativePath":"setup.md","filePath":"setup.md"}'),o={name:"setup.md"};function p(i,t,u,m,l,c){return s(),e("div",null,t[0]||(t[0]=[r("",13)]))}const d=a(o,[["render",p]]);export{n as __pageData,d as default};

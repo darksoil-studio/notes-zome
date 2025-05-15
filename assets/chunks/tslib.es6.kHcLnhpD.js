@@ -1,0 +1,1 @@
+function p(l,t,c,f){var r=arguments.length,e=r<3?t:f===null?f=Object.getOwnPropertyDescriptor(t,c):f,o;if(typeof Reflect=="object"&&typeof Reflect.decorate=="function")e=Reflect.decorate(l,t,c,f);else for(var n=l.length-1;n>=0;n--)(o=l[n])&&(e=(r<3?o(e):r>3?o(t,c,e):o(t,c))||e);return r>3&&e&&Object.defineProperty(t,c,e),e}export{p as _};

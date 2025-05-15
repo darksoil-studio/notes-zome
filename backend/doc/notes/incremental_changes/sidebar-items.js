@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["add_incremental_changes_for_note","get_incremental_changes_for_note"],"struct":["AddIncrementalChangesForNoteInput"]};
