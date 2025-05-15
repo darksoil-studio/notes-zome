@@ -30,7 +30,10 @@ import {
 
 import { NotesClient } from './notes-client.js';
 import { Note } from './types.js';
-import { allRevisionsOfAutomergeEntrySignal } from './utils.js';
+import {
+	AutomergeEntryRecord,
+	allRevisionsOfAutomergeEntrySignal,
+} from './utils.js';
 
 export class NotesStore {
 	constructor(public client: NotesClient) {}
@@ -43,9 +46,14 @@ export class NotesStore {
 			() => this.client.getAllRevisionsForNote(noteHash),
 			2000,
 		);
+		const original = immutableEntrySignal(() =>
+			this.client.getOriginalNote(noteHash),
+		) as unknown as AsyncSignal<AutomergeEntryRecord<Note>>;
 		return {
 			latestVersion: new AsyncComputed(() => {
 				const allRevisionsResult = allRevisions.get();
+				const originalResult = original.get();
+				if (originalResult.status !== 'completed') return originalResult;
 				if (allRevisionsResult.status !== 'completed')
 					return allRevisionsResult;
 
@@ -61,11 +69,14 @@ export class NotesStore {
 
 				const notes = allRevisionsResult.value.map(r => r.data);
 
-				let doc: Automerge.Doc<Note> = Automerge.load(notes[0]);
+				let doc: Automerge.Doc<Note> = Automerge.load(
+					originalResult.value.data,
+				);
 
-				for (let i = 1; i < notes.length; i++) {
+				for (let i = 0; i < notes.length; i++) {
 					doc = Automerge.loadIncremental(doc, notes[i]);
 				}
+				console.log('h5');
 				Automerge.save(doc);
 				return {
 					status: 'completed',
@@ -75,9 +86,7 @@ export class NotesStore {
 					},
 				};
 			}),
-			original: immutableEntrySignal(() =>
-				this.client.getOriginalNote(noteHash),
-			),
+			original,
 			allRevisions,
 			deletes: deletesForEntrySignal(this.client, noteHash, () =>
 				this.client.getAllDeletesForNote(noteHash),

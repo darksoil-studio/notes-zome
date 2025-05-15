@@ -70,8 +70,7 @@ pub fn get_all_revisions_for_note(original_note_hash: ActionHash) -> ExternResul
         })
         .collect::<ExternResult<Vec<GetInput>>>()?;
     let records = HDK.with(|hdk| hdk.borrow().get(get_input))?;
-    let mut records: Vec<Record> = records.into_iter().flatten().collect();
-    records.insert(0, record_details.record);
+    let records: Vec<Record> = records.into_iter().flatten().collect();
     Ok(records)
 }
 
