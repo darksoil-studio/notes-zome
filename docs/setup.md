@@ -17,10 +17,10 @@ This will do the following:
 
 That's it! You have now integrated the `notes` coordinator and integrity zomes and their UI into your app!
 
-Now, [choose which elements you need](/elements/notes-context.md) and import them like this:
+Now, [choose which elements you need](/elements/note-detail.md) and import them like this:
 
 ```js
-import "@darksoil-studio/notes-zome/dist/elements/notes-context.js";
+import "@darksoil-studio/notes-zome/dist/elements/note-detail.js";
 ```
 
 And then they are ready be used just like any other HTML tag. 
