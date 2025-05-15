@@ -25,6 +25,7 @@ import {
 	EntryHash,
 	NewEntryAction,
 	Record,
+	encodeHashToBase64,
 } from '@holochain/client';
 
 import { NotesClient } from './notes-client.js';
@@ -37,14 +38,26 @@ export class NotesStore {
 	/** Note */
 
 	notes = new MemoHoloHashMap((noteHash: ActionHash) => {
-		const allRevisions = allRevisionsOfAutomergeEntrySignal(this.client, () =>
-			this.client.getAllRevisionsForNote(noteHash),
+		const allRevisions = allRevisionsOfAutomergeEntrySignal(
+			this.client,
+			() => this.client.getAllRevisionsForNote(noteHash),
+			2000,
 		);
 		return {
 			latestVersion: new AsyncComputed(() => {
 				const allRevisionsResult = allRevisions.get();
 				if (allRevisionsResult.status !== 'completed')
 					return allRevisionsResult;
+
+				const hasDescendants = (actionHash: ActionHash) =>
+					allRevisionsResult.value.find(r =>
+						r.previousHashes.find(
+							h => encodeHashToBase64(h) === encodeHashToBase64(actionHash),
+						),
+					);
+				const previousHashes = allRevisionsResult.value
+					.filter(r => !hasDescendants(r.actionHash))
+					.map(r => r.actionHash);
 
 				const notes = allRevisionsResult.value.map(r => r.data);
 
@@ -56,7 +69,10 @@ export class NotesStore {
 				Automerge.save(doc);
 				return {
 					status: 'completed',
-					value: doc,
+					value: {
+						doc,
+						previousHashes,
+					},
 				};
 			}),
 			original: immutableEntrySignal(() =>
@@ -81,7 +97,12 @@ export class NotesStore {
 	/** All Notes */
 
 	allNotes = pipe(
-		collectionSignal(this.client, () => this.client.getAllNotes(), 'AllNotes'),
+		collectionSignal(
+			this.client,
+			() => this.client.getAllNotes(),
+			'AllNotes',
+			3000,
+		),
 		allNotes =>
 			slice(
 				this.notes,

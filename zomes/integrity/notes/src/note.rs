@@ -6,6 +6,7 @@ use hdi::prelude::*;
 #[hdk_entry_helper]
 pub struct Note {
     pub data: Vec<u8>,
+    pub previous_hashes: Vec<ActionHash>,
 }
 
 // #[derive(Clone, PartialEq, Serialize, Deserialize, Debug)]
@@ -36,7 +37,20 @@ pub fn validate_create_note(
     //     AutoCommit::load(note.0.as_slice()).map_err(|err| wasm_error!("Load error {:?}", err))?;
     // let _note: NoteContent =
     //     hydrate(&autocommit).map_err(|err| wasm_error!("Invalid data: {:?}", err))?;
-    // TODO: add the appropriate validation rules
+
+    for previous_hash in note.previous_hashes {
+        let record = must_get_valid_record(previous_hash)?;
+
+        let _note: crate::Note = record
+            .entry()
+            .to_app_option()
+            .map_err(|e| wasm_error!(e))?
+            .ok_or(wasm_error!(WasmErrorInner::Guest(
+                "Linked action must reference an entry".to_string()
+            )))?;
+        // TODO: crawl back til the start of the history
+    }
+
     Ok(ValidateCallbackResult::Valid)
 }
 

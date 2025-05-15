@@ -10,7 +10,7 @@ import {
 	EntryRecord,
 	ZomeClient,
 } from '@darksoil-studio/holochain-utils';
-import { Record } from '@holochain/client';
+import { ActionHash, Record } from '@holochain/client';
 
 export class AutomergeEntryRecord<T> extends EntryRecord<Automerge.Doc<T>> {
 	constructor(record: Record) {
@@ -18,6 +18,10 @@ export class AutomergeEntryRecord<T> extends EntryRecord<Automerge.Doc<T>> {
 	}
 	get data(): Uint8Array {
 		return (super.entry as unknown as { data: Uint8Array }).data;
+	}
+	get previousHashes(): ActionHash[] {
+		return (super.entry as unknown as { previous_hashes: ActionHash[] })
+			.previous_hashes;
 	}
 	get entry(): Automerge.Doc<T> {
 		return Automerge.load(this.data);

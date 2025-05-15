@@ -9,7 +9,7 @@ import {
 	wrapPathInSvg,
 } from '@darksoil-studio/holochain-elements';
 import '@darksoil-studio/holochain-elements/dist/elements/display-error.js';
-import { SignalWatcher } from '@darksoil-studio/holochain-signals';
+import { SignalWatcher, toPromise } from '@darksoil-studio/holochain-signals';
 import { EntryRecord } from '@darksoil-studio/holochain-utils';
 import {
 	ActionHash,
@@ -122,10 +122,15 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 
 		const newNote = updatedNote.document.docSync()! as Automerge.Doc<Note>;
 
+		const latestVersion = await toPromise(
+			this.notesStore.notes.get(this.noteHash).latestVersion,
+		);
+
 		const data = Automerge.saveIncremental(newNote);
 		try {
 			const updateRecord = await this.notesStore.client.updateNote(
 				this.noteHash,
+				latestVersion.previousHashes,
 				data,
 			);
 
@@ -199,7 +204,7 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 					.error=${note.error}
 				></display-error>`;
 			case 'completed':
-				return this.renderDetail(note.value);
+				return this.renderDetail(note.value.doc);
 		}
 	}
 

@@ -83,7 +83,7 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 					.error=${note.error}
 				></display-error>`;
 			case 'completed':
-				return this.renderSummary(note.value);
+				return this.renderSummary(note.value.doc);
 		}
 	}
 

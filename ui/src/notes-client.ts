@@ -33,6 +33,7 @@ export class NotesClient extends ZomeClient<NotesSignal> {
 			data: Automerge.save(
 				Automerge.from(note as unknown as Record<string, unknown>),
 			),
+			previous_hashes: [],
 		});
 		return new EntryRecord(record);
 	}
@@ -63,12 +64,14 @@ export class NotesClient extends ZomeClient<NotesSignal> {
 
 	async updateNote(
 		noteHash: ActionHash,
+		previousHashes: ActionHash[],
 		data: Uint8Array,
 	): Promise<EntryRecord<Note>> {
 		const record: HRecord = await this.callZome('update_note', {
 			original_note_hash: noteHash,
 			updated_note: {
 				data,
+				previous_hashes: previousHashes,
 			},
 		});
 		return new AutomergeEntryRecord(record);
