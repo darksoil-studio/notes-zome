@@ -60,7 +60,6 @@ test('create and update Note', async () => {
 		assert.ok(note);
 
 		const originalActionHash = note.actionHash;
-
 		const latestVersion = await toPromise(
 			bob.store.notes.get(originalActionHash).latestVersion,
 		);
@@ -88,7 +87,7 @@ test('create and update Note', async () => {
 		assert.equal(contentUpdate.body, readUpdatedOutput0.doc.body);
 
 		// Alice updates the Note again
-		contentUpdate = Automerge.change<Note>(latestVersion.doc, doc => {
+		contentUpdate = Automerge.change<Note>(readUpdatedOutput0.doc, doc => {
 			doc.title = 'hey2';
 		});
 

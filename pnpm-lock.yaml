@@ -94,7 +94,7 @@ importers:
         specifier: ^0.19.0
         version: 0.19.0
       '@holochain/tryorama':
-        specifier: ^0.18.0
+        specifier: ^0.18.1
         version: 0.18.1
       '@msgpack/msgpack':
         specifier: ^2.8.0
