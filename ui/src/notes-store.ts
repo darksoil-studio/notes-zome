@@ -44,7 +44,7 @@ export class NotesStore {
 		const allRevisions = allRevisionsOfAutomergeEntrySignal(
 			this.client,
 			() => this.client.getAllRevisionsForNote(noteHash),
-			2000,
+			2_000,
 		);
 		const original = immutableEntrySignal(() =>
 			this.client.getOriginalNote(noteHash),
@@ -76,7 +76,6 @@ export class NotesStore {
 				for (let i = 0; i < notes.length; i++) {
 					doc = Automerge.loadIncremental(doc, notes[i]);
 				}
-				console.log('h5');
 				Automerge.save(doc);
 				return {
 					status: 'completed',
