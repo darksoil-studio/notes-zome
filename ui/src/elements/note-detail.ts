@@ -126,6 +126,9 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 			this.notesStore.notes.get(this.noteHash).latestVersion,
 		);
 
+		const changes = Automerge.getChanges(latestVersion.doc, newNote);
+		if (changes.length === 0) return;
+
 		const data = Automerge.saveIncremental(newNote);
 		try {
 			const updateRecord = await this.notesStore.client.updateNote(
