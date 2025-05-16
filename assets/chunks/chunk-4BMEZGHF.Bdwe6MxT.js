@@ -1,0 +1,1 @@
+import{_ as l}from"../app.DGmP0RVq.js";function s(i,t){var c,a,o;i.accDescr&&((c=t.setAccDescription)==null||c.call(t,i.accDescr)),i.accTitle&&((a=t.setAccTitle)==null||a.call(t,i.accTitle)),i.title&&((o=t.setDiagramTitle)==null||o.call(t,i.title))}l(s,"populateCommonDb");export{s as p};
