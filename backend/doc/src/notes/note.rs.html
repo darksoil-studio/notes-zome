@@ -135,7 +135,8 @@
 <a href="#134" id="134">134</a>
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a></pre></div><pre class="rust"><code><span class="kw">use </span>hdk::prelude::<span class="kw-2">*</span>;
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a></pre></div><pre class="rust"><code><span class="kw">use </span>hdk::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>notes_integrity::<span class="kw-2">*</span>;
 
 <span class="attr">#[hdk_extern]
@@ -207,7 +208,8 @@
         })
         .collect::&lt;ExternResult&lt;Vec&lt;GetInput&gt;&gt;&gt;()<span class="question-mark">?</span>;
     <span class="kw">let </span>records = HDK.with(|hdk| hdk.borrow().get(get_input))<span class="question-mark">?</span>;
-    <span class="kw">let </span>records: Vec&lt;Record&gt; = records.into_iter().flatten().collect();
+    <span class="kw">let </span><span class="kw-2">mut </span>records: Vec&lt;Record&gt; = records.into_iter().flatten().collect();
+    records.insert(<span class="number">0</span>, record_details.record);
     <span class="prelude-val">Ok</span>(records)
 }
 

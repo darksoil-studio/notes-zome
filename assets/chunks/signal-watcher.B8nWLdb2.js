@@ -1,4 +1,4 @@
-var i=Object.defineProperty;var r=(s,e,a)=>e in s?i(s,e,{enumerable:!0,configurable:!0,writable:!0,value:a}):s[e]=a;var c=(s,e,a)=>r(s,typeof e!="symbol"?e+"":e,a);import{S as d}from"./notes-client.CtlbsTPZ.js";/**
+var i=Object.defineProperty;var r=(s,e,a)=>e in s?i(s,e,{enumerable:!0,configurable:!0,writable:!0,value:a}):s[e]=a;var c=(s,e,a)=>r(s,typeof e!="symbol"?e+"":e,a);import{S as d}from"./notes-client.D5p1SwbK.js";/**
 * @license
 * Copyright 2023 Google LLC
 * SPDX-License-Identifier: BSD-3-Clause

@@ -1,4 +1,4 @@
-import{g as je,l as Ve,h as et,i as ie,x as T,T as Ie}from"./notes-client.CtlbsTPZ.js";import{a as m,s as We,t as Ue}from"./property.BTRT8MSf.js";/**
+import{g as je,l as Ve,h as et,i as ie,x as T,T as Ie}from"./notes-client.D5p1SwbK.js";import{a as m,s as We,t as Ue}from"./property.D-Bq6jHL.js";/**
 * @license
 * Copyright 2017 Google LLC
 * SPDX-License-Identifier: BSD-3-Clause
