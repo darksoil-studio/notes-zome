@@ -1,5 +1,6 @@
 import { next as Automerge } from '@automerge/automerge/slim';
 import '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
+import { CollaborativeProsemirror } from '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
 import '@darksoil-studio/automerge-collaborative-sessions/dist/elements/collaborative-document-context.js';
 import { CollaborativeDocumentContext } from '@darksoil-studio/automerge-collaborative-sessions/dist/elements/collaborative-document-context.js';
 import {
@@ -27,9 +28,9 @@ import {
 	mdiPencil,
 } from '@mdi/js';
 import '@shoelace-style/shoelace/dist/components/alert/alert.js';
-import SlAlert from '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -37,8 +38,10 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { baseKeymap } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
+import { NodeType } from 'prosemirror-model';
+import { Selection, TextSelection } from 'prosemirror-state';
 
-import { basicTextSchema } from '../basic-text-schema.js';
+import { basicTextSchemaSpec } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
 import { NotesStore } from '../notes-store.js';
 import { Note } from '../types.js';
@@ -165,16 +168,19 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 					>
 						<collaborative-prosemirror
 							style="font-size: 24px; overflow: auto"
-							.schema=${basicTextSchema}
+							.schemaSpec=${basicTextSchemaSpec}
 							.path=${['title']}
+							.placeholder=${msg('Title')}
 						>
 						</collaborative-prosemirror>
 
 						<collaborative-prosemirror
-							.schema=${basicTextSchema}
+							.schemaSpec=${basicTextSchemaSpec}
+							id="body"
 							style="flex: 1"
 							.plugins=${[keymap(baseKeymap)]}
 							.path=${['body']}
+							.placeholder=${msg('Write your note...')}
 						>
 						</collaborative-prosemirror>
 					</collaborative-document-context>
@@ -183,6 +189,41 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						<sl-icon-button
 							style="font-size: 24px"
 							.src=${wrapPathInSvg(mdiOrderBoolAscendingVariant)}
+							@click=${() => {
+								const cp = this.shadowRoot!.getElementById(
+									'body',
+								)! as CollaborativeProsemirror;
+								const checkboxType = cp.schema!.nodes.paragraphWithCheckbox;
+
+								const state = cp.prosemirror.state;
+								// let { $from } = state.selection,
+								// 	index = $from.index();
+								// console.log('hi', index, $from);
+								// // if (!$from.parent.canReplaceWith(index, index, checkboxType))
+								// // 	return false;
+								// console.log('hi2');
+								cp.prosemirror.dispatch(
+									state.tr.insert(
+										state.selection.to,
+										checkboxType.create({
+											checked: false,
+										}),
+									),
+								);
+
+								// const state = cp.prosemirror.state;
+								// const to = state.selection.to;
+								// const tr = state.tr.insertText('aaa', to);
+								// cp.prosemirror.dispatch(tr);
+								// const tr2 = cp.prosemirror.state.tr.setSelection(
+								// 	TextSelection.create(
+								// 		cp.prosemirror.state.doc,
+								// 		to + 3,
+								// 		to + 3,
+								// 	),
+								// );
+								// cp.prosemirror.dispatch(tr2);
+							}}
 						>
 						</sl-icon-button>
 					</div>

@@ -38,21 +38,16 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 
 	renderSummary(note: Note) {
 		return html`
-			<div class="row" style="gap: 16px; flex: 1; height: 200px">
-				${note.images_hashes.length > 0
-					? html`
-							<div class="column" style="height: 200px">
-								${note.images_hashes.map(
-									imageHash => html`
-										<show-image
-											style="max-width: 600px;"
-											.imageHash=${imageHash}
-										></show-image>
-									`,
-								)}
-							</div>
-						`
-					: html``}
+			${note.images_hashes.map(
+				imageHash => html`
+					<show-image
+						part="image"
+						slot="image"
+						.imageHash=${imageHash}
+					></show-image>
+				`,
+			)}
+			<div class="row" style="gap: 16px; flex: 1;">
 				<div class="column" style="gap: 16px; flex: 1;">
 					<span
 						style="white-space: pre-line; font-size: 24px; word-break: break-all"

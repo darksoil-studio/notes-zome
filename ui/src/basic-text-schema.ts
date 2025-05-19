@@ -3,7 +3,7 @@ import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 const pDOM: DOMOutputSpec = ['p', 0];
 
-export const basicTextSchema: MappedSchemaSpec = {
+export const basicTextSchemaSpec: MappedSchemaSpec = {
 	nodes: {
 		/// NodeSpec The top level document node.
 		doc: {
@@ -21,6 +21,24 @@ export const basicTextSchema: MappedSchemaSpec = {
 			parseDOM: [{ tag: 'p' }],
 			toDOM() {
 				return pDOM;
+			},
+		} as NodeSpec,
+
+		checkbox: {
+			// automerge: {
+			// 	block: '',
+			// },
+			// content: 'inline',
+			group: 'inline',
+			inline: true,
+			attrs: {
+				checked: {
+					default: false,
+				},
+			},
+			parseDOM: [{ tag: 'sl-checkbox', attrs: { checked: false } }],
+			toDOM() {
+				return ['sl-checkbox', { checked: false }, 0];
 			},
 		} as NodeSpec,
 
