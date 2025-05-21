@@ -1,8 +1,10 @@
 import { MappedSchemaSpec } from '@automerge/prosemirror';
+import { createListSpec, listToDOM } from 'prosemirror-flat-list';
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 const pDOM: DOMOutputSpec = ['p', 0];
 
+console.log(createListSpec());
 export const basicTextSchemaSpec: MappedSchemaSpec = {
 	nodes: {
 		/// NodeSpec The top level document node.
@@ -24,23 +26,12 @@ export const basicTextSchemaSpec: MappedSchemaSpec = {
 			},
 		} as NodeSpec,
 
-		checkbox: {
-			// automerge: {
-			// 	block: '',
-			// },
-			// content: 'inline',
-			group: 'inline',
-			inline: true,
-			attrs: {
-				checked: {
-					default: false,
-				},
+		list: {
+			automerge: {
+				block: 'paragraph',
 			},
-			parseDOM: [{ tag: 'sl-checkbox', attrs: { checked: false } }],
-			toDOM() {
-				return ['sl-checkbox', { checked: false }, 0];
-			},
-		} as NodeSpec,
+			...createListSpec(),
+		},
 
 		unknownBlock: {
 			automerge: {

@@ -13,7 +13,11 @@
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
-	"files": ["dist", "locales", "src"],
+	"files": [
+		"dist",
+		"locales",
+		"src"
+	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/darksoil-studio/notes-zome.git"
@@ -42,6 +46,8 @@
 		"@tauri-apps/api": "^2.5.0",
 		"lit": "^3.0.0",
 		"prosemirror-commands": "^1.7.1",
+		"prosemirror-flat-list": "^0.5.5",
+		"prosemirror-inputrules": "^1.5.0",
 		"prosemirror-keymap": "^1.2.3",
 		"prosemirror-model": "^1.25.1",
 		"prosemirror-state": "^1.4.3"

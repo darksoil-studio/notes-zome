@@ -31,14 +31,25 @@ import '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { baseKeymap } from 'prosemirror-commands';
+import {
+	createListClipboardPlugin,
+	createListEventPlugin,
+	createListPlugins,
+	createListRenderingPlugin,
+	createSafariInputMethodWorkaroundPlugin,
+	listInputRules,
+	listKeymap,
+} from 'prosemirror-flat-list';
+import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { NodeType } from 'prosemirror-model';
+import { NodeType, Schema } from 'prosemirror-model';
 import { Selection, TextSelection } from 'prosemirror-state';
 
 import { basicTextSchemaSpec } from '../basic-text-schema.js';
@@ -178,7 +189,14 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 							.schemaSpec=${basicTextSchemaSpec}
 							id="body"
 							style="flex: 1"
-							.plugins=${[keymap(baseKeymap)]}
+							.plugins=${[
+								...createListPlugins({
+									schema: new Schema(basicTextSchemaSpec),
+								}),
+								inputRules({ rules: listInputRules }),
+								keymap(listKeymap),
+								keymap(baseKeymap),
+							]}
 							.path=${['body']}
 							.placeholder=${msg('Write your note...')}
 						>
@@ -193,20 +211,13 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 								const cp = this.shadowRoot!.getElementById(
 									'body',
 								)! as CollaborativeProsemirror;
-								const checkboxType = cp.schema!.nodes.paragraphWithCheckbox;
+								const listType = cp.schema!.nodes.list;
 
-								const state = cp.prosemirror.state;
-								// let { $from } = state.selection,
-								// 	index = $from.index();
-								// console.log('hi', index, $from);
-								// // if (!$from.parent.canReplaceWith(index, index, checkboxType))
-								// // 	return false;
-								// console.log('hi2');
 								cp.prosemirror.dispatch(
-									state.tr.insert(
-										state.selection.to,
-										checkboxType.create({
-											checked: false,
+									cp.prosemirror.state.tr.insert(
+										cp.prosemirror.state.selection.to,
+										listType.create({
+											kind: 'task',
 										}),
 									),
 								);
