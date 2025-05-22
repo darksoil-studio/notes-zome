@@ -4,7 +4,6 @@ import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 const pDOM: DOMOutputSpec = ['p', 0];
 
-console.log(createListSpec());
 export const basicTextSchemaSpec: MappedSchemaSpec = {
 	nodes: {
 		/// NodeSpec The top level document node.
@@ -28,7 +27,17 @@ export const basicTextSchemaSpec: MappedSchemaSpec = {
 
 		list: {
 			automerge: {
-				block: 'paragraph',
+				block: 'list',
+				attrParsers: {
+					fromAutomerge: block => ({
+						kind: block.attrs.kind,
+						checked: block.attrs.checked,
+					}),
+					fromProsemirror: node => ({
+						kind: node.attrs.kind,
+						checked: node.attrs.checked,
+					}),
+				},
 			},
 			...createListSpec(),
 		},

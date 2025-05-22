@@ -121,8 +121,8 @@ importers:
         specifier: ^0.0.13
         version: 0.0.13
       '@darksoil-studio/automerge-collaborative-prosemirror':
-        specifier: ^0.500.4
-        version: 0.500.4(@floating-ui/utils@0.2.9)(@types/react@19.1.3)
+        specifier: file:/home/guillem/projects/darksoil/collaborative-sessions/packages/automerge-collaborative-prosemirror
+        version: file:../collaborative-sessions/packages/automerge-collaborative-prosemirror(@floating-ui/utils@0.2.9)(@types/react@19.1.3)
       '@darksoil-studio/automerge-collaborative-sessions':
         specifier: ^0.500.4
         version: 0.500.4(@floating-ui/utils@0.2.9)(@types/react@19.1.3)
@@ -180,6 +180,9 @@ importers:
       prosemirror-model:
         specifier: ^1.25.1
         version: 1.25.1
+      prosemirror-schema-basic:
+        specifier: ^1.2.4
+        version: 1.2.4
       prosemirror-state:
         specifier: ^1.4.3
         version: 1.4.3
@@ -410,8 +413,8 @@ packages:
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
 
-  '@darksoil-studio/automerge-collaborative-prosemirror@0.500.4':
-    resolution: {integrity: sha512-HFF79hU+YpgRY5KSCu1NCt22echapJmausjISjLicJAZVsIzFJF/SzI71BTLlAecSmVqZVP0TEBAk9eQwpkDzg==}
+  '@darksoil-studio/automerge-collaborative-prosemirror@file:../collaborative-sessions/packages/automerge-collaborative-prosemirror':
+    resolution: {directory: ../collaborative-sessions/packages/automerge-collaborative-prosemirror, type: directory}
 
   '@darksoil-studio/automerge-collaborative-sessions@0.500.4':
     resolution: {integrity: sha512-R9SLd8o3u6sXtvNJtRwyl25hZSK6d+D1vGJfH3m6LfPnJmzGHdKW+xUnIGZ6yGO8QfNCUuB9EZ2Vz5XbYOPy1g==}
@@ -3696,7 +3699,7 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@darksoil-studio/automerge-collaborative-prosemirror@0.500.4(@floating-ui/utils@0.2.9)(@types/react@19.1.3)':
+  '@darksoil-studio/automerge-collaborative-prosemirror@file:../collaborative-sessions/packages/automerge-collaborative-prosemirror(@floating-ui/utils@0.2.9)(@types/react@19.1.3)':
     dependencies:
       '@automerge/automerge': 2.2.9
       '@automerge/prosemirror': 0.0.13

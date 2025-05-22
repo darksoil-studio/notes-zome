@@ -39,22 +39,18 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { baseKeymap } from 'prosemirror-commands';
 import {
-	createListClipboardPlugin,
-	createListEventPlugin,
 	createListPlugins,
-	createListRenderingPlugin,
-	createSafariInputMethodWorkaroundPlugin,
 	listInputRules,
 	listKeymap,
 } from 'prosemirror-flat-list';
 import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { NodeType, Schema } from 'prosemirror-model';
-import { Selection, TextSelection } from 'prosemirror-state';
 
 import { basicTextSchemaSpec } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
 import { NotesStore } from '../notes-store.js';
+import { prosemirrorFlatListStyles } from '../prosemirror-flat-list-styles.js';
 import { Note } from '../types.js';
 
 /**
@@ -175,7 +171,7 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						.sessionId="${encodeHashToBase64(this.noteHash)}}"
 						.acceptedCollaborators=${this.acceptedCollaborators}
 						.initialDocument=${doc}
-						@document-changed=${() => this.setupUnload()}
+						@document-change=${() => this.setupUnload()}
 					>
 						<collaborative-prosemirror
 							style="font-size: 24px; overflow: auto"
@@ -189,6 +185,7 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 							.schemaSpec=${basicTextSchemaSpec}
 							id="body"
 							style="flex: 1"
+							.styles=${[prosemirrorFlatListStyles]}
 							.plugins=${[
 								...createListPlugins({
 									schema: new Schema(basicTextSchemaSpec),
@@ -216,24 +213,12 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 								cp.prosemirror.dispatch(
 									cp.prosemirror.state.tr.insert(
 										cp.prosemirror.state.selection.to,
-										listType.create({
+										listType.createAndFill({
 											kind: 'task',
-										}),
+											checked: false,
+										})!,
 									),
 								);
-
-								// const state = cp.prosemirror.state;
-								// const to = state.selection.to;
-								// const tr = state.tr.insertText('aaa', to);
-								// cp.prosemirror.dispatch(tr);
-								// const tr2 = cp.prosemirror.state.tr.setSelection(
-								// 	TextSelection.create(
-								// 		cp.prosemirror.state.doc,
-								// 		to + 3,
-								// 		to + 3,
-								// 	),
-								// );
-								// cp.prosemirror.dispatch(tr2);
 							}}
 						>
 						</sl-icon-button>
