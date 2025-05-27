@@ -37,18 +37,25 @@ import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ref } from 'lit/directives/ref.js';
 import { baseKeymap } from 'prosemirror-commands';
 import {
+	createListClipboardPlugin,
+	createListEventPlugin,
 	createListPlugins,
+	createListRenderingPlugin,
+	createSafariInputMethodWorkaroundPlugin,
+	handleListMarkerMouseDown,
 	listInputRules,
 	listKeymap,
 } from 'prosemirror-flat-list';
 import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { NodeType, Schema } from 'prosemirror-model';
+import { Plugin, TextSelection } from 'prosemirror-state';
 
-import { basicTextSchemaSpec } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
+import { noteSchemaSpec } from '../note-schema.js';
 import { NotesStore } from '../notes-store.js';
 import { prosemirrorFlatListStyles } from '../prosemirror-flat-list-styles.js';
 import { Note } from '../types.js';
@@ -163,6 +170,8 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 		}
 	}
 
+	interval: number | undefined;
+
 	renderDetail(doc: Automerge.Doc<Note>) {
 		return html`
 			<sl-card style="flex: 1">
@@ -175,7 +184,7 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 					>
 						<collaborative-prosemirror
 							style="font-size: 24px; overflow: auto"
-							.schemaSpec=${basicTextSchemaSpec}
+							.schemaSpec=${noteSchemaSpec}
 							.path=${['title']}
 							.placeholder=${msg('Title')}
 						>
@@ -184,12 +193,37 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						<collaborative-prosemirror
 							id="body"
 							style="flex: 1"
-							.schemaSpec=${basicTextSchemaSpec}
+							.schemaSpec=${noteSchemaSpec}
 							.styles=${[prosemirrorFlatListStyles]}
 							.plugins=${[
-								...createListPlugins({
-									schema: new Schema(basicTextSchemaSpec),
+								new Plugin({
+									props: {
+										handleDOMEvents: {
+											mousedown: (view, event) => {
+												handleListMarkerMouseDown({
+													view,
+													event: {
+														target: event.composedPath()[0],
+														preventDefault: () => event.preventDefault(),
+													} as any,
+												});
+												const paragraph = view.state.schema!.nodes.paragraph;
+												let pos = view.state.doc.content.size;
+												view.dispatch(
+													view.state.tr.insert(pos, paragraph.create()!),
+												);
+												pos =
+													view.state.doc.content.size -
+													view.state.doc.lastChild!.nodeSize;
+												view.dispatch(view.state.tr.delete(pos, pos + 1));
+											},
+										},
+									},
 								}),
+								// createListEventPlugin(),
+								createListRenderingPlugin(),
+								createListClipboardPlugin(new Schema(noteSchemaSpec)),
+								createSafariInputMethodWorkaroundPlugin(),
 								inputRules({ rules: listInputRules }),
 								keymap(listKeymap),
 								keymap(baseKeymap),

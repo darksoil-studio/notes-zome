@@ -4,7 +4,7 @@ import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 const pDOM: DOMOutputSpec = ['p', 0];
 
-export const basicTextSchemaSpec: MappedSchemaSpec = {
+export const noteSchemaSpec: MappedSchemaSpec = {
 	nodes: {
 		/// NodeSpec The top level document node.
 		doc: {

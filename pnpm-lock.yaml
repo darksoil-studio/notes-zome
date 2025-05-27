@@ -121,8 +121,8 @@ importers:
         specifier: ^0.0.13
         version: 0.0.13
       '@darksoil-studio/automerge-collaborative-prosemirror':
-        specifier: file:/home/guillem/projects/darksoil/collaborative-sessions/packages/automerge-collaborative-prosemirror
-        version: file:../collaborative-sessions/packages/automerge-collaborative-prosemirror(@floating-ui/utils@0.2.9)(@types/react@19.1.3)
+        specifier: ^0.500.5
+        version: 0.500.5(@floating-ui/utils@0.2.9)(@types/react@19.1.3)
       '@darksoil-studio/automerge-collaborative-sessions':
         specifier: ^0.500.4
         version: 0.500.4(@floating-ui/utils@0.2.9)(@types/react@19.1.3)
@@ -410,8 +410,8 @@ packages:
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
 
-  '@darksoil-studio/automerge-collaborative-prosemirror@file:../collaborative-sessions/packages/automerge-collaborative-prosemirror':
-    resolution: {directory: ../collaborative-sessions/packages/automerge-collaborative-prosemirror, type: directory}
+  '@darksoil-studio/automerge-collaborative-prosemirror@0.500.5':
+    resolution: {integrity: sha512-9wyjvh4xNfOw2Tcpiqxp56s4nAeO+BWaKcg1iNVKxJzfbVWT5V9pDxTenMo5B5+TB+Ockgo3Ph/opS37EYj3VQ==}
 
   '@darksoil-studio/automerge-collaborative-sessions@0.500.4':
     resolution: {integrity: sha512-R9SLd8o3u6sXtvNJtRwyl25hZSK6d+D1vGJfH3m6LfPnJmzGHdKW+xUnIGZ6yGO8QfNCUuB9EZ2Vz5XbYOPy1g==}
@@ -2767,8 +2767,8 @@ packages:
   prosemirror-transform@1.10.4:
     resolution: {integrity: sha512-pwDy22nAnGqNR1feOQKHxoFkkUtepoFAd3r2hbEDsnf4wp57kKA36hXsB3njA9FtONBEwSDnDeCiJe+ItD+ykw==}
 
-  prosemirror-view@1.39.2:
-    resolution: {integrity: sha512-BmOkml0QWNob165gyUxXi5K5CVUgVPpqMEAAml/qzgKn9boLUWVPzQ6LtzXw8Cn1GtRQX4ELumPxqtLTDaAKtg==}
+  prosemirror-view@1.39.3:
+    resolution: {integrity: sha512-bY/7kg0LzRE7ytR0zRdSMWX3sknEjw68l836ffLPMh0OG3OYnNuBDUSF3v0vjvnzgYjgY9ZH/RypbARURlcMFA==}
 
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
@@ -3558,7 +3558,7 @@ snapshots:
       prosemirror-schema-list: 1.5.1
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.39.2
+      prosemirror-view: 1.39.3
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -3696,7 +3696,7 @@ snapshots:
       enabled: 2.0.0
       kuler: 2.0.0
 
-  '@darksoil-studio/automerge-collaborative-prosemirror@file:../collaborative-sessions/packages/automerge-collaborative-prosemirror(@floating-ui/utils@0.2.9)(@types/react@19.1.3)':
+  '@darksoil-studio/automerge-collaborative-prosemirror@0.500.5(@floating-ui/utils@0.2.9)(@types/react@19.1.3)':
     dependencies:
       '@automerge/automerge': 2.2.9
       '@automerge/prosemirror': 0.0.13
@@ -3716,7 +3716,7 @@ snapshots:
       prosemirror-model: 1.25.1
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.39.2
+      prosemirror-view: 1.39.3
       signal-polyfill: 0.2.2
     transitivePeerDependencies:
       - '@floating-ui/utils'
@@ -6240,13 +6240,13 @@ snapshots:
       prosemirror-safari-ime-span: 1.0.2
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.39.2
+      prosemirror-view: 1.39.3
 
   prosemirror-history@1.4.1:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.39.2
+      prosemirror-view: 1.39.3
       rope-sequence: 1.3.4
 
   prosemirror-inputrules@1.5.0:
@@ -6273,7 +6273,7 @@ snapshots:
   prosemirror-safari-ime-span@1.0.2:
     dependencies:
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.39.2
+      prosemirror-view: 1.39.3
 
   prosemirror-schema-basic@1.2.4:
     dependencies:
@@ -6289,13 +6289,13 @@ snapshots:
     dependencies:
       prosemirror-model: 1.25.1
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.39.2
+      prosemirror-view: 1.39.3
 
   prosemirror-transform@1.10.4:
     dependencies:
       prosemirror-model: 1.25.1
 
-  prosemirror-view@1.39.2:
+  prosemirror-view@1.39.3:
     dependencies:
       prosemirror-model: 1.25.1
       prosemirror-state: 1.4.3

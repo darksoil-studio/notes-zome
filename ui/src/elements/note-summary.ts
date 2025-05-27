@@ -24,8 +24,8 @@ import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { Schema } from 'prosemirror-model';
 
-import { basicTextSchemaSpec } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
+import { noteSchemaSpec } from '../note-schema.js';
 import { NotesStore } from '../notes-store.js';
 import { prosemirrorFlatListStyles } from '../prosemirror-flat-list-styles.js';
 import { Note } from '../types.js';
@@ -70,11 +70,11 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 					<readonly-prosemirror
 						.document=${note}
 						.path=${['body']}
-						.schemaSpec=${basicTextSchemaSpec}
+						.schemaSpec=${noteSchemaSpec}
 						.styles=${[prosemirrorFlatListStyles]}
 						.plugins=${[
 							...createListPlugins({
-								schema: new Schema(basicTextSchemaSpec),
+								schema: new Schema(noteSchemaSpec),
 							}),
 							inputRules({ rules: listInputRules }),
 							keymap(listKeymap),
