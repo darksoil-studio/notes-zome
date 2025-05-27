@@ -1,3 +1,5 @@
+import { next as Automerge } from '@automerge/automerge/slim';
+import '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/readonly-prosemirror.js';
 import {
 	hashProperty,
 	sharedStyles,
@@ -12,9 +14,20 @@ import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { baseKeymap } from 'prosemirror-commands';
+import {
+	createListPlugins,
+	listInputRules,
+	listKeymap,
+} from 'prosemirror-flat-list';
+import { inputRules } from 'prosemirror-inputrules';
+import { keymap } from 'prosemirror-keymap';
+import { Schema } from 'prosemirror-model';
 
+import { basicTextSchemaSpec } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
 import { NotesStore } from '../notes-store.js';
+import { prosemirrorFlatListStyles } from '../prosemirror-flat-list-styles.js';
 import { Note } from '../types.js';
 
 /**
@@ -36,7 +49,7 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 	@consume({ context: notesStoreContext, subscribe: true })
 	notesStore!: NotesStore;
 
-	renderSummary(note: Note) {
+	renderSummary(note: Automerge.Doc<Note>) {
 		return html`
 			${note.images_hashes.map(
 				imageHash => html`
@@ -54,9 +67,21 @@ export class NoteSummary extends SignalWatcher(LitElement) {
 						>${note.title}</span
 					>
 
-					<div style="overflow: hidden; word-break: break-all">
-						${note.body}
-					</div>
+					<readonly-prosemirror
+						.document=${note}
+						.path=${['body']}
+						.schemaSpec=${basicTextSchemaSpec}
+						.styles=${[prosemirrorFlatListStyles]}
+						.plugins=${[
+							...createListPlugins({
+								schema: new Schema(basicTextSchemaSpec),
+							}),
+							inputRules({ rules: listInputRules }),
+							keymap(listKeymap),
+							keymap(baseKeymap),
+						]}
+						style="flex: 1; overflow: hidden;"
+					></readonly-prosemirror>
 				</div>
 			</div>
 		`;

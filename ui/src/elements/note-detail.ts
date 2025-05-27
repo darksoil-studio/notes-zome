@@ -182,9 +182,9 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						</collaborative-prosemirror>
 
 						<collaborative-prosemirror
-							.schemaSpec=${basicTextSchemaSpec}
 							id="body"
 							style="flex: 1"
+							.schemaSpec=${basicTextSchemaSpec}
 							.styles=${[prosemirrorFlatListStyles]}
 							.plugins=${[
 								...createListPlugins({

@@ -180,9 +180,6 @@ importers:
       prosemirror-model:
         specifier: ^1.25.1
         version: 1.25.1
-      prosemirror-schema-basic:
-        specifier: ^1.2.4
-        version: 1.2.4
       prosemirror-state:
         specifier: ^1.4.3
         version: 1.4.3
