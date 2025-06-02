@@ -1,6 +1,5 @@
 import { next as Automerge } from '@automerge/automerge/slim';
 import {
-	AsyncComputed,
 	AsyncSignal,
 	allRevisionsOfEntrySignal,
 	mapCompleted,
