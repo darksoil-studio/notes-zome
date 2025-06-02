@@ -234,7 +234,7 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						</collaborative-prosemirror>
 					</collaborative-document-context>
 
-					<div class="row" style="max-height: 200px">
+					<div class="row" style="max-height: 200px; align-items: center">
 						<sl-icon-button
 							style="font-size: 24px"
 							.src=${wrapPathInSvg(mdiOrderBoolAscendingVariant)}
@@ -256,6 +256,8 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 							}}
 						>
 						</sl-icon-button>
+
+						<slot name="footer"></slot>
 					</div>
 				</div>
 			</sl-card>
