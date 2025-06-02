@@ -1,6 +1,5 @@
 import { next as Automerge } from '@automerge/automerge/slim';
 import {
-	AsyncComputed,
 	AsyncSignal,
 	allRevisionsOfEntrySignal,
 	mapCompleted,
@@ -11,11 +10,6 @@ import {
 	ZomeClient,
 } from '@darksoil-studio/holochain-utils';
 import { ActionHash, Record } from '@holochain/client';
-import {
-	ListClickHandler,
-	defaultListClickHandler,
-} from 'prosemirror-flat-list';
-import { EditorView } from 'prosemirror-view';
 
 export class AutomergeEntryRecord<T> extends EntryRecord<Automerge.Doc<T>> {
 	constructor(record: Record) {
