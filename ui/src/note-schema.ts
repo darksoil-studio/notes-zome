@@ -1,9 +1,10 @@
 import { MappedSchemaSpec } from '@automerge/prosemirror';
+import { createListSpec, listToDOM } from 'prosemirror-flat-list';
 import { DOMOutputSpec, NodeSpec } from 'prosemirror-model';
 
 const pDOM: DOMOutputSpec = ['p', 0];
 
-export const basicTextSchema: MappedSchemaSpec = {
+export const noteSchemaSpec: MappedSchemaSpec = {
 	nodes: {
 		/// NodeSpec The top level document node.
 		doc: {
@@ -23,6 +24,23 @@ export const basicTextSchema: MappedSchemaSpec = {
 				return pDOM;
 			},
 		} as NodeSpec,
+
+		list: {
+			automerge: {
+				block: 'list',
+				attrParsers: {
+					fromAutomerge: block => ({
+						kind: block.attrs.kind,
+						checked: block.attrs.checked,
+					}),
+					fromProsemirror: node => ({
+						kind: node.attrs.kind,
+						checked: node.attrs.checked,
+					}),
+				},
+			},
+			...createListSpec(),
+		},
 
 		unknownBlock: {
 			automerge: {

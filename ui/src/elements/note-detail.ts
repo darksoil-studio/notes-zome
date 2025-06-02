@@ -1,5 +1,6 @@
 import { next as Automerge } from '@automerge/automerge/slim';
 import '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
+import { CollaborativeProsemirror } from '@darksoil-studio/automerge-collaborative-prosemirror/dist/elements/collaborative-prosemirror.js';
 import '@darksoil-studio/automerge-collaborative-sessions/dist/elements/collaborative-document-context.js';
 import { CollaborativeDocumentContext } from '@darksoil-studio/automerge-collaborative-sessions/dist/elements/collaborative-document-context.js';
 import {
@@ -27,20 +28,36 @@ import {
 	mdiPencil,
 } from '@mdi/js';
 import '@shoelace-style/shoelace/dist/components/alert/alert.js';
-import SlAlert from '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
+import '@shoelace-style/shoelace/dist/components/checkbox/checkbox.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ref } from 'lit/directives/ref.js';
 import { baseKeymap } from 'prosemirror-commands';
+import {
+	createListClipboardPlugin,
+	createListEventPlugin,
+	createListPlugins,
+	createListRenderingPlugin,
+	createSafariInputMethodWorkaroundPlugin,
+	handleListMarkerMouseDown,
+	listInputRules,
+	listKeymap,
+} from 'prosemirror-flat-list';
+import { inputRules } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
+import { NodeType, Schema } from 'prosemirror-model';
+import { Plugin, TextSelection } from 'prosemirror-state';
 
-import { basicTextSchema } from '../basic-text-schema.js';
 import { notesStoreContext } from '../context.js';
+import { noteSchemaSpec } from '../note-schema.js';
 import { NotesStore } from '../notes-store.js';
+import { prosemirrorFlatListStyles } from '../prosemirror-flat-list-styles.js';
 import { Note } from '../types.js';
 
 /**
@@ -153,6 +170,8 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 		}
 	}
 
+	interval: number | undefined;
+
 	renderDetail(doc: Automerge.Doc<Note>) {
 		return html`
 			<sl-card style="flex: 1">
@@ -161,30 +180,84 @@ export class NoteDetail extends SignalWatcher(LitElement) {
 						.sessionId="${encodeHashToBase64(this.noteHash)}}"
 						.acceptedCollaborators=${this.acceptedCollaborators}
 						.initialDocument=${doc}
-						@document-changed=${() => this.setupUnload()}
+						@document-change=${() => this.setupUnload()}
 					>
 						<collaborative-prosemirror
 							style="font-size: 24px; overflow: auto"
-							.schema=${basicTextSchema}
+							.schemaSpec=${noteSchemaSpec}
 							.path=${['title']}
+							.placeholder=${msg('Title')}
 						>
 						</collaborative-prosemirror>
 
 						<collaborative-prosemirror
-							.schema=${basicTextSchema}
+							id="body"
 							style="flex: 1"
-							.plugins=${[keymap(baseKeymap)]}
+							.schemaSpec=${noteSchemaSpec}
+							.styles=${[prosemirrorFlatListStyles]}
+							.plugins=${[
+								new Plugin({
+									props: {
+										handleDOMEvents: {
+											mousedown: (view, event) => {
+												handleListMarkerMouseDown({
+													view,
+													event: {
+														target: event.composedPath()[0],
+														preventDefault: () => event.preventDefault(),
+													} as any,
+												});
+												const paragraph = view.state.schema!.nodes.paragraph;
+												let pos = view.state.doc.content.size;
+												view.dispatch(
+													view.state.tr.insert(pos, paragraph.create()!),
+												);
+												pos =
+													view.state.doc.content.size -
+													view.state.doc.lastChild!.nodeSize;
+												view.dispatch(view.state.tr.delete(pos, pos + 1));
+											},
+										},
+									},
+								}),
+								// createListEventPlugin(),
+								createListRenderingPlugin(),
+								createListClipboardPlugin(new Schema(noteSchemaSpec)),
+								createSafariInputMethodWorkaroundPlugin(),
+								inputRules({ rules: listInputRules }),
+								keymap(listKeymap),
+								keymap(baseKeymap),
+							]}
 							.path=${['body']}
+							.placeholder=${msg('Write your note...')}
 						>
 						</collaborative-prosemirror>
 					</collaborative-document-context>
 
-					<div class="row" style="max-height: 200px">
+					<div class="row" style="max-height: 200px; align-items: center">
 						<sl-icon-button
 							style="font-size: 24px"
 							.src=${wrapPathInSvg(mdiOrderBoolAscendingVariant)}
+							@click=${() => {
+								const cp = this.shadowRoot!.getElementById(
+									'body',
+								)! as CollaborativeProsemirror;
+								const listType = cp.schema!.nodes.list;
+
+								cp.prosemirror.dispatch(
+									cp.prosemirror.state.tr.insert(
+										cp.prosemirror.state.selection.to,
+										listType.createAndFill({
+											kind: 'task',
+											checked: false,
+										})!,
+									),
+								);
+							}}
 						>
 						</sl-icon-button>
+
+						<slot name="footer"></slot>
 					</div>
 				</div>
 			</sl-card>
