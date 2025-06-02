@@ -1,4 +1,4 @@
-import{h as u,j as d,k as p}from"./notes-client.DwRtGXZP.js";/**
+import{h as u,k as d,l as p}from"./notes-client.B2dIe2T5.js";/**
 * @license
 * Copyright 2021 Google LLC
 * SPDX-License-Identifier: BSD-3-Clause
