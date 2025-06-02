@@ -60,30 +60,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/basic-text-schema.ts",
-      "declarations": [
-        {
-          "kind": "variable",
-          "name": "basicTextSchema",
-          "type": {
-            "text": "MappedSchemaSpec"
-          },
-          "default": "{ nodes: { /// NodeSpec The top level document node. doc: { content: 'block+', } as NodeSpec, /// A plain paragraph textblock. Represented in the DOM /// as a `<p>` element. paragraph: { automerge: { block: 'paragraph', }, content: 'inline*', group: 'block', parseDOM: [{ tag: 'p' }], toDOM() { return pDOM; }, } as NodeSpec, unknownBlock: { automerge: { unknownBlock: true, }, group: 'block', content: 'block+', parseDOM: [{ tag: 'div', attrs: { 'data-unknown-block': 'true' } }], toDOM() { return ['div', { 'data-unknown-block': 'true' }, 0]; }, }, /// The text node. text: { group: 'inline', } as NodeSpec, }, marks: {}, }"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "basicTextSchema",
-          "declaration": {
-            "name": "basicTextSchema",
-            "module": "src/basic-text-schema.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/context.ts",
       "declarations": [
         {
@@ -393,6 +369,30 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/note-schema.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "noteSchemaSpec",
+          "type": {
+            "text": "MappedSchemaSpec"
+          },
+          "default": "{ nodes: { /// NodeSpec The top level document node. doc: { content: 'block+', } as NodeSpec, /// A plain paragraph textblock. Represented in the DOM /// as a `<p>` element. paragraph: { automerge: { block: 'paragraph', }, content: 'inline*', group: 'block', parseDOM: [{ tag: 'p' }], toDOM() { return pDOM; }, } as NodeSpec, list: { automerge: { block: 'list', attrParsers: { fromAutomerge: block => ({ kind: block.attrs.kind, checked: block.attrs.checked, }), fromProsemirror: node => ({ kind: node.attrs.kind, checked: node.attrs.checked, }), }, }, ...createListSpec(), }, unknownBlock: { automerge: { unknownBlock: true, }, group: 'block', content: 'block+', parseDOM: [{ tag: 'div', attrs: { 'data-unknown-block': 'true' } }], toDOM() { return ['div', { 'data-unknown-block': 'true' }, 0]; }, }, /// The text node. text: { group: 'inline', } as NodeSpec, }, marks: {}, }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "noteSchemaSpec",
+          "declaration": {
+            "name": "noteSchemaSpec",
+            "module": "src/note-schema.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/notes-client.ts",
       "declarations": [
         {
@@ -629,7 +629,7 @@
             {
               "kind": "field",
               "name": "notes",
-              "default": "new MemoHoloHashMap((noteHash: ActionHash) => { const allRevisions = allRevisionsOfAutomergeEntrySignal( this.client, () => this.client.getAllRevisionsForNote(noteHash), 2000, ); const original = immutableEntrySignal(() => this.client.getOriginalNote(noteHash), ) as unknown as AsyncSignal<AutomergeEntryRecord<Note>>; return { latestVersion: new AsyncComputed(() => { const allRevisionsResult = allRevisions.get(); const originalResult = original.get(); if (originalResult.status !== 'completed') return originalResult; if (allRevisionsResult.status !== 'completed') return allRevisionsResult; const hasDescendants = (actionHash: ActionHash) => allRevisionsResult.value.find(r => r.previousHashes.find( h => encodeHashToBase64(h) === encodeHashToBase64(actionHash), ), ); const previousHashes = allRevisionsResult.value .filter(r => !hasDescendants(r.actionHash)) .map(r => r.actionHash); console.log('hey', allRevisionsResult.value); const notes = allRevisionsResult.value.map(r => r.data); let doc: Automerge.Doc<Note> = Automerge.load( originalResult.value.data, ); for (let i = 0; i < notes.length; i++) { doc = Automerge.loadIncremental(doc, notes[i]); } Automerge.save(doc); return { status: 'completed', value: { doc, previousHashes, }, }; }), original, allRevisions, deletes: deletesForEntrySignal(this.client, noteHash, () => this.client.getAllDeletesForNote(noteHash), ), incrementalChanges: pipe( liveLinksSignal( this.client, noteHash, () => this.client.getIncrementalChangesForNote(noteHash), 'IncrementalChanges', ), links => links, ), }; })",
+              "default": "new MemoHoloHashMap((noteHash: ActionHash) => { const allRevisions = allRevisionsOfAutomergeEntrySignal( this.client, () => this.client.getAllRevisionsForNote(noteHash), 2_000, ); const original = immutableEntrySignal(() => this.client.getOriginalNote(noteHash), ) as unknown as AsyncSignal<AutomergeEntryRecord<Note>>; return { latestVersion: new AsyncComputed(() => { const allRevisionsResult = allRevisions.get(); const originalResult = original.get(); if (originalResult.status !== 'completed') return originalResult; if (allRevisionsResult.status !== 'completed') return allRevisionsResult; const hasDescendants = (actionHash: ActionHash) => allRevisionsResult.value.find(r => r.previousHashes.find( h => encodeHashToBase64(h) === encodeHashToBase64(actionHash), ), ); const previousHashes = allRevisionsResult.value .filter(r => !hasDescendants(r.actionHash)) .map(r => r.actionHash); const notes = allRevisionsResult.value.map(r => r.data); let doc: Automerge.Doc<Note> = Automerge.load( originalResult.value.data, ); for (let i = 0; i < notes.length; i++) { doc = Automerge.loadIncremental(doc, notes[i]); } Automerge.save(doc); return { status: 'completed', value: { doc, previousHashes, }, }; }), original, allRevisions, deletes: deletesForEntrySignal(this.client, noteHash, () => this.client.getAllDeletesForNote(noteHash), ), incrementalChanges: pipe( liveLinksSignal( this.client, noteHash, () => this.client.getIncrementalChangesForNote(noteHash), 'IncrementalChanges', ), links => links, ), }; })",
               "description": "Note"
             },
             {
@@ -647,6 +647,27 @@
           "declaration": {
             "name": "NotesStore",
             "module": "src/notes-store.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/prosemirror-flat-list-styles.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "prosemirrorFlatListStyles",
+          "default": "css` .prosemirror-flat-list { & { padding: 0; margin-top: 0; margin-bottom: 0; margin-left: 32px; margin-bottom: 0; position: relative; display: list-item; list-style: none; } &.ProseMirror-selectednode { outline: none; &:after { content: ''; position: absolute; left: -32px; right: -2px; top: -2px; bottom: -2px; border: 2px solid #8cf; pointer-events: none; } } &[data-list-kind='task'] { & > .list-content { width: 300px; } & > .list-marker { position: absolute; right: 100%; text-align: center; width: 1.5em; width: 1lh; &, & * { cursor: pointer; } } } } `"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "prosemirrorFlatListStyles",
+          "declaration": {
+            "name": "prosemirrorFlatListStyles",
+            "module": "src/prosemirror-flat-list-styles.ts"
           }
         }
       ]
@@ -860,6 +881,13 @@
               "name": "updateNote"
             },
             {
+              "kind": "field",
+              "name": "interval",
+              "type": {
+                "text": "number | undefined"
+              }
+            },
+            {
               "kind": "method",
               "name": "renderDetail",
               "parameters": [
@@ -970,7 +998,7 @@
                 {
                   "name": "note",
                   "type": {
-                    "text": "Note"
+                    "text": "Automerge.Doc<Note>"
                   }
                 }
               ]
